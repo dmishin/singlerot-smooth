@@ -429,9 +429,12 @@ rle b20o$22o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o1
   --Lightest SS
   at 10 10
 rle $2o2$2o3$38bo$2o36bo$bo8bobo9bo6b3o$2bo6b2o9bobo6bo8bo$20bo17bo
+  """,
   """
-    
-  
+  --Fastest orthogonal
+  at 14 2
+  rle 2bo38bo$2bo12bo5bo3bo8bo8bo5bobo$bo12bo6bo2bo10bo7bo5bobo$11bo11b2o6b2o2bo$b3o8bo11b2o9bo6bo$15bo7bo17b3o$11b2obo$43bo
+  """
 ]
 
 patternBounds = (lst) ->
