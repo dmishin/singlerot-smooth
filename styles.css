@@ -15,7 +15,7 @@ input[type=radio] {
 input[type=radio] + label {
     display:inline-block;
     margin: 0;
-    padding: 0 0.8em;
+    padding: 0.2em 0.8em;
     cursor: pointer;
 }
 input[type=radio] + label:hover {
@@ -30,7 +30,7 @@ input[type=radio] + label:focus {
 */
 input[type=radio]:checked + label {
    background-image: none;
-   background-color:#00ff00;
+   background-color:#7dc410;
    color: #000;
 }
 
