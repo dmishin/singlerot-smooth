@@ -73,7 +73,7 @@ parseFieldDescriptionlLanguage = (fdlText, defaultPalette) ->
       curColors = if colorsText is "default"
         defaultPalette
       else
-        (c.trim() for c in colorsText.split ",")
+        (c.trim() for c in colorsText.split ":")
     else if instruction.match(FLD.empty)
       null
     else if m = instruction.match(FLD.comment)
@@ -168,9 +168,9 @@ class SimulatorApp
   _updateSmoothing: -> @isim.setSmoothing parseInt getRadioValue("radios-smoothing", "0"), 10
   _updateTrails: ->    @fadeRatio = parseFloat getRadioValue("radios-trails", "0.9")
   _loadFdl: (fdl) ->
-    fdl = fdl.split("\n").join(";")#replace newlines with spaces
     try
       [pp, cc, fldSize] = parseFieldDescriptionlLanguage fdl, @colorPalette
+      document.getElementById("fld-text").value = fdl
     catch e
       alert "Failed to parse: #{e}"
     @isim.clear()

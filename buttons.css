@@ -89,6 +89,7 @@ button.transparent-image-button{
 /*library*/
 ul.library{
     display:block;
+    padding-left: 2em;
 }
 ul.library > li{
     display:inline-block;
@@ -96,7 +97,6 @@ ul.library > li{
     margin: 0 0.2em 0.2em 0;
     padding-top: 0.2em;
     width: 6em;
-    background-color: #444;
     cursor: pointer;
 }
 ul.library > li:hover{
@@ -115,19 +115,27 @@ ul.library > li:hover{
     text-align: center;
 }
 
-/******************** Hide-show ***************/
-.hide-manipulator {
-    width: 100%;
-    height: 4em;
-    background-color: rgba(0,0,0,0.1);
-    text-align: center;
+/*** Custon scene ****/
+#scene-editor div{
+    padding-left: 2em;
 }
-.show-less {
-    background-image: url("show-more.svg");
-    background-repeat: no-repeat;
-    qbackground-attachment: fixed;
-    background-position: center;
+#scene-editor textarea{
+    width: 80%;
+    height: 8em;
 }
-.hide-manipulator:hover {
-    background-color: rgba(255,255,255,0.2);
+
+dl{
+    padding-left: 2em;
+}
+dt{
+    font-weight: bold;
+}
+.command {
+    color: #f7325e;
+}
+.arg1 {
+    color: #fe8f0f;
+}
+.arg2 {
+    color: #7dc410;
 }

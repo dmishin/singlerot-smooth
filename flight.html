@@ -88,19 +88,41 @@
       </div>
     </div>
     
-    
-    <div id="rule_editor">
-    </div>
-    
-    <ul id="library" class="library"></ul>
-    
+    <div>
+      Load scene:
+      <ul id="library" class="library"></ul>  
     </div>
 
-<div>
-  Load FDL:
-  <textarea id="fld-text"></textarea>
-  <button id="btn-load-fdl">Load</button>
-</div>
+    <div id="scene-editor">
+      Custom scene:
+      <div>
+	<textarea id="fld-text"></textarea>
+      </div>
+      <div>
+	<button id="btn-load-fdl">Load</button>
+      </div>
+
+      <h3>Scene description language</h3>
+      <p>
+	Scene desciription is a sequence of statements, separated by newlines or ";". Statements are case-sensitive.
+	Five statements are supported:
+	<dl>
+	  <dt><span class="command">at</span> <span class="arg1">X<span> <span class="arg2">Y</span></dt>
+	  <dd>Sets current origin to the cell with coordinates <span class="arg1">X</span>, <span class="arg2">Y</span>. Used by the following <span class="command">rle</span> commands.</dd>
+	  <dt><span class="command">--</span> <span class="arg1">TEXT</span></dt>
+	  <dd>Defines description text. Several lines may be defined. Text can not contain semicolons (;).</dd>
+	  
+	  <dt><span class="command">rle</span> <span class="arg1">PATTERN-RLE</span></dt>
+	  <dd>Puts given RLE code at the current coorinates. Rle code is a standard format, used by many cellular automata simulators.</dd>
+	  
+	  <dt><span class="command">colors</span> <span class="arg1">COLOR-LIST</span></dt>
+	  <dd>Sets current color pattern. When adding patterns, new cell colors are taken from this pattern.
+	    <span class="arg1">COLOR-LIST</span> can be either :-separated list of any CSS colors, or the text "default". In the latter case, pattern is returned to the default.
+	  </dd>
+	</dl>
+	Effect of the <span class="command">at</span> and <span class="command">colors</span> statements lasts until they are redefined. Additional spaces and empty lines are ignored.
+      </p>
+    </div>
 
     
     <script type="text/javascript" src="flight.js"></script> 
