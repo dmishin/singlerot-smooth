@@ -3,11 +3,11 @@
   <meta charset="utf-8"> 
   <head>
     <title>Flight</title>
-    <link rel="stylesheet" type="text/css" href="buttons.css"/>
+    <link rel="stylesheet" type="text/css" href="styles.css"/>
   </head>
   <body>
     <div id="clear-box">
-      <button id="btn-clear" class="transparent-image-button">
+      <button id="btn-clear" class="transparent-image-button" title="Remove everything">
 	<img src="clear-all.svg" style="width:4em;height:4em">
       </button>
     </div>
@@ -88,13 +88,13 @@
       </div>
     </div>
     
+    <h2>Scene library</h3>
     <div>
-      Load scene:
       <ul id="library" class="library"></ul>  
     </div>
 
+    <h2>Custom scene</h3>
     <div id="scene-editor">
-      Custom scene:
       <div>
 	<textarea id="fld-text"></textarea>
       </div>

@@ -152,7 +152,7 @@ class SimulatorApp
     @library.loadItem = (fdl)=>@_loadFdl(fdl)
 
     for item in defaultLibrary
-      @library.addFdl item, @defaultPalette
+      @library.addFdl item, @colorPalette
     return
   putRandomPattern: (numCells, patternSize)->
     s = @isim.simulator

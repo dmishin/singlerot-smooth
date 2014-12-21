@@ -90,6 +90,7 @@ button.transparent-image-button{
 ul.library{
     display:block;
     padding-left: 2em;
+    font-size: 80%;
 }
 ul.library > li{
     display:inline-block;
@@ -122,6 +123,11 @@ ul.library > li:hover{
 #scene-editor textarea{
     width: 80%;
     height: 8em;
+    border: 0px solid #0264ed;
+    padding: 0.5em;
+    font-family: monospace;
+    background-color: #333;
+    color: #fff;
 }
 
 dl{
