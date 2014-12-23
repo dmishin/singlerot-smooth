@@ -181,12 +181,15 @@ class SimulatorApp
     @_clearBackground()
     window.scrollTo 0, 0
     
-    
+  clearAll: ->
+    @isim.clear()
+    @_clearBackground() unless @playing
   bindEvents: ->
     addOnRadioChange "radios-sim-speed", (e)=>@_updateSimSpeed()
     addOnRadioChange "radios-smoothing", (e)=>@_updateSmoothing()
     addOnRadioChange "radios-trails", (e)=>@_updateTrails()
-    document.getElementById("btn-clear").addEventListener "click", (e)=>@isim.clear()
+    document.getElementById("btn-clear").addEventListener "click", (e)=>@clearAll()
+    document.getElementById("btn-play-pause").addEventListener "click", (e)=>@togglePlay()
     
     document.getElementById("btn-load-fdl").addEventListener "click", (e)=>
       @_loadFdl document.getElementById("fld-text").value
@@ -257,7 +260,9 @@ class SimulatorApp
 
   stop: ->
     @playing = false
-    
+
+  togglePlay: -> if @playing then @stop() else @play()
+  
   play: ->
     if @playing
       console.log "Already playing"

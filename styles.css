@@ -54,11 +54,17 @@ header{
     background-color: rgba(255,255,255,0.1);
     width: 100%;
 }
+.top-toolbar{
+    position: absolute;
+    left:0;
+    right:0;
+    margin-left:auto;
+    margin-right:auto;
+}
 #clear-box{
     position: absolute;
     top: 0;
     right: 0;
-    z-order: 2;
 }
 #main-screen{
     margin: 0;
@@ -75,6 +81,21 @@ header{
     text-align:right;
 }
 
+.grow-menu {
+    height: 2em; /* Origional height */
+    transition:height 0.5s; /* Animation time */
+    -webkit-transition:height 0.5s; /* For Safari */
+    overflow: hidden;
+}
+.grow-menu:hover {
+    height: 8em; /* This is the height on hover */
+    background-color: rgba(255,255,255,0.2);
+}
+
+
+a.transparent-image-link{
+    
+}
 button.transparent-image-button{
     background: transparent;
     border: none !important;    
