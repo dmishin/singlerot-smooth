@@ -101,6 +101,13 @@ addOnRadioChange = (radioName, handler) ->
     radio.addEventListener "change", handler
   return
 
+
+setButtonImgSrc = (btnId, src)->
+  btn = document.getElementById btnId
+  img = btn.getElementsByTagName("img")[0]
+  img.src = src
+  return img
+
 class SimulatorApp
 #drawCanvasSimulation
   constructor: ->
@@ -261,7 +268,13 @@ class SimulatorApp
   stop: ->
     @playing = false
 
-  togglePlay: -> if @playing then @stop() else @play()
+  togglePlay: ->
+    if @playing
+      @stop()
+      setButtonImgSrc "btn-play-pause", "images/ic_play_arrow_24px.svg"
+    else
+      @play()
+      setButtonImgSrc "btn-play-pause", "images/ic_pause_24px.svg"
   
   play: ->
     if @playing

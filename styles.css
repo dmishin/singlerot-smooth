@@ -94,11 +94,26 @@ header{
 
 
 a.transparent-image-link{
-    
-}
-button.transparent-image-button{
     background: transparent;
-    border: none !important;    
+    border-style: none;
+    font-size: 1em;
+    padding: 0;
+    margin: 0;
+    outline: 0;
+}
+.transparent-image-link img{
+    opacity: 0.5;
+}
+.transparent-image-link:hover img{
+    opacity: 1.0;
+}
+
+button.transparent-image-button{
+    font-size: 1em;
+    background: transparent;
+    border: none !important;
+    padding: 0;
+    margin: 0;
 }
 .transparent-image-button img{
     opacity: 0.5;
@@ -166,3 +181,4 @@ dt{
 .arg2 {
     color: #7dc410;
 }
+
