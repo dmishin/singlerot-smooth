@@ -183,9 +183,11 @@ exports.CircularInterpolatingSimulator = class CircularInterpolatingSimulator
 
   put: (pattern, x0=0, y0=0) ->
     newStates = []
+    w = @simulator.width
+    h = @simulator.height
     for [x,y] in pattern
-      x+=x0
-      y+=y0
+      x = mod (x+x0), width
+      y = mod (y+y0), height
       if @simulator.putCell(x,y)?
         newStates.push x
         newStates.push y
