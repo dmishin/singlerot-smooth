@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" href="styles.css"/>
   </head>
   <body>
-    <div id="clear-box">
+    <div id="clear-box" class="grow-menu">
       <button id="btn-clear" class="transparent-image-button" title="Remove everything">
 	<img src="clear-all.svg" style="width:4em;height:4em">
       </button>
@@ -96,7 +96,7 @@
     <h2>Custom scene</h3>
     <div id="scene-editor">
       <div>
-	<textarea id="fld-text"></textarea>
+	<textarea id="fld-text" spellcheck="false"></textarea>
       </div>
       <div>
 	<button id="btn-load-fdl">Load</button>
@@ -112,8 +112,14 @@
 	  <dt><span class="command">--</span> <span class="arg1">TEXT</span></dt>
 	  <dd>Defines description text. Several lines may be defined. Text can not contain semicolons (;).</dd>
 	  
-	  <dt><span class="command">rle</span> <span class="arg1">PATTERN-RLE</span></dt>
-	  <dd>Puts given RLE code at the current coorinates. Rle code is a standard format, used by many cellular automata simulators.</dd>
+	  <dt><span class="arg1">PATTERN_RLE</span></dt>
+	  <dd>Puts given RLE code at the current coorinates. Rle code is a standard format, used by many cellular automata simulators.
+	    <ul><li><span class="command">b</span> encodes empty cell,</li>
+	      <li><span class="command">o</span> - alive cell,</li>
+	      <li><span class="command">$</span> - new line,</li>
+	      <li>numbers encode repeat count of the following character.</li>
+	    </ul>
+	  </dd>
 	  
 	  <dt><span class="command">colors</span> <span class="arg1">COLOR-LIST</span></dt>
 	  <dd>Sets current color pattern. When adding patterns, new cell colors are taken from this pattern.
