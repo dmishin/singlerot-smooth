@@ -71,7 +71,7 @@ parseFieldDescriptionlLanguage = (fdlText, defaultPalette) ->
     if m = instruction.match FLD.rle
       for [x,y],i in parseRle m[1]
         pattern.push [x+pos[0], y+pos[1]]
-        colors.push curColors[i % curColors.length]
+        colors.push curColors[colors.length % curColors.length]
     else if m = instruction.match FLD.at
       pos = [parseInt(m[1], 10), parseInt(m[2],10)]
     else if m = instruction.match FLD.size
