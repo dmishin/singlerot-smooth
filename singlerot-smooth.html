@@ -15,7 +15,7 @@
 	  <img src="images/ic_clear_24px.svg" style="width:3em;height:3em">
 	</button>
 	<button id="btn-random" class="transparent-image-button" title="Random pattern">
-	  <img src="images/ic_help_24px.svg" style="width:3em;height:3em">
+	  <img src="images/ic_refresh_24px.svg" style="width:3em;height:3em">
 	</button>
       </div>
       <div class="top-right-toolbar">
@@ -27,6 +27,18 @@
       <canvas id="sim-canvas" width="800" height="600"></canvas>
     </div>
 
+    
+    <div id="controls1">
+      Speed: <select id="sim-speed">
+	<option value="2">2</option>
+	<option value="10">10</option>
+	<option value="50">50</option>
+	<option value="100">100</option>
+      </select> gen/s. Filter period: <select id="smoothing"></select>.
+      Trails: <select id="trails"></select>.
+      
+    </div>
+    
     <div id="controls">
       <div id="speed" class="controls-row">
 	<div class="controls-cell label"><span title="Generations per second">gen/s</span>: </div>
