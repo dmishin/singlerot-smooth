@@ -29,6 +29,17 @@ input[type=radio]:checked + label {
    color: #000;
 }
 
+
+select {
+    background-color: #232;
+    color: #eff;
+    padding: 0.2em;
+    font-size: 1em;
+    border: none;
+    margin: 0 0.2em 0 0.2em;
+}
+
+
 /* ******************************
 *  Main window layout 
 */
@@ -38,8 +49,26 @@ body{
     margin: 0;
     padding: 0;
 }
+#main-screen{
+    position: relative;
+    z-index: 1;
+}
+#controls1{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 2;
+    opacity: 0.5;
+}
+#controls1:hover{
+    opacity: 1;
+}
+#controls1:focus{
+    opacity: 1;
+}
 
 #controls{
+    display: none;
     background-color: rgba(255,255,255,0.1);
     width: 100%;
     overflow: hidden;

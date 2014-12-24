@@ -98,23 +98,6 @@ getCanvasCursorPosition = (e, canvas) ->
     rect = canvas.getBoundingClientRect()
     return [e.clientX - rect.left, e.clientY - rect.top]
 
-getRadioValue = (radioName, defVal)->
-  for radio in document.getElementsByName radioName
-    if radio.checked
-      return radio.value
-  return defVal
-
-addOnRadioChange = (radioName, handler) ->
-  for radio in document.getElementsByName radioName
-    radio.addEventListener "change", handler
-  return
-
-
-setButtonImgSrc = (btnId, src)->
-  btn = document.getElementById btnId
-  img = btn.getElementsByTagName("img")[0]
-  img.src = src
-  return img
 
 class SimulatorApp
 #drawCanvasSimulation
@@ -132,7 +115,7 @@ class SimulatorApp
 
     width = 80
     if screen?
-      height = Math.floor(screen.height / screen.width * width * 0.85) & ~1 #clear low bit
+      height = Math.floor(screen.height / screen.width * width * 0.9) & ~1 #clear low bit
     else
       height = 60
     
@@ -188,9 +171,9 @@ class SimulatorApp
       y = Math.round( s.height*0.5 + r*Math.sin(f))
       [x|0,y|0])
     
-  _updateSimSpeed: ->  @gensPerSecond = parseFloat getRadioValue("radios-sim-speed", "0")
-  _updateSmoothing: -> @isim.setSmoothing parseInt getRadioValue("radios-smoothing", "0"), 10
-  _updateTrails: ->    @fadeRatio = parseFloat getRadioValue("radios-trails", "0.9")
+  _updateSimSpeed: ->  @gensPerSecond = parseFloat document.getElementById("sim-speed").value
+  _updateSmoothing: -> @isim.setSmoothing parseInt document.getElementById("smoothing").value, 10
+  _updateTrails: ->    @fadeRatio = parseFloat document.getElementById("trails").value
   _loadFdl: (fdl) ->
     cx = (@isim.simulator.width/2) & ~1
     cy = (@isim.simulator.height/2) & ~1
@@ -224,9 +207,10 @@ class SimulatorApp
     return
           
   bindEvents: ->
-    addOnRadioChange "radios-sim-speed", (e)=>@_updateSimSpeed()
-    addOnRadioChange "radios-smoothing", (e)=>@_updateSmoothing()
-    addOnRadioChange "radios-trails", (e)=>@_updateTrails()
+    document.getElementById("sim-speed").addEventListener "change", (e)=>@_updateSimSpeed()
+    document.getElementById("smoothing").addEventListener "change", (e)=>@_updateSmoothing()
+    document.getElementById("trails").addEventListener "change", (e)=>@_updateTrails()
+    
     document.getElementById("btn-clear").addEventListener "click", (e)=>@clearAll()
     document.getElementById("btn-random").addEventListener "click", (e)=>@putRandomPattern()
     document.getElementById("btn-play").addEventListener "click", (e)=>@play() unless @playing

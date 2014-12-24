@@ -7,7 +7,35 @@
   </head>
   <body>
     <div id="main-screen">
-      <div class="top-toolbar">
+    <div id="controls1">
+      Speed: <select id="sim-speed">
+	<option value="3">3</option>
+	<option value="10">10</option>
+	<option value="30" selected="selected">30</option>
+	<option value="100">100</option>
+	<option value="300">300</option>
+	<option value="1000">1000</option>
+	<option value="3000">3000</option>
+      </select> gen/s.
+      Filter period: <select id="smoothing">
+	<option value="1">--</option>
+	<option value="4" selected="selected">4</option>
+	<option value="12">12</option>
+	<option value="24">24</option>
+	<option value="48">48</option>
+	<option value="60">60</option>
+	<option value="120">120</option>
+      </select>.
+      Trails: <select id="trails">
+	<option value="1">no</option>
+	<option value="0.15" selected="selected">short</option>
+	<option value="0.05">medium</option>
+	<option value="0.01">long</option>
+	<option value="0">infinite</option>
+      </select>.
+    </div>
+
+    <div class="top-toolbar">
 	<button id="btn-play" class="transparent-image-button" title="Play/Pause">
 	  <img src="images/ic_play_arrow_24px.svg" style="width:3em;height:3em">
 	</button>
@@ -32,86 +60,7 @@
     </div>
 
     
-    <div id="controls1">
-      Speed: <select id="sim-speed">
-	<option value="2">2</option>
-	<option value="10">10</option>
-	<option value="50">50</option>
-	<option value="100">100</option>
-      </select> gen/s. Filter period: <select id="smoothing"></select>.
-      Trails: <select id="trails"></select>.
-      
-    </div>
     
-    <div id="controls">
-      <div id="speed" class="controls-row">
-	<div class="controls-cell label"><span title="Generations per second">gen/s</span>: </div>
-	<div class="controls-cell">
-	  <input type="radio" id="sim-speed4" name="radios-sim-speed" value="1">
-	  <label for="sim-speed4">1</label> 	
-
-	  <input type="radio" id="sim-speed5" name="radios-sim-speed" value="5">
-	  <label for="sim-speed5">5</label> 	
-
-	  <input type="radio" id="sim-speed6" name="radios-sim-speed" value="10">
-	  <label for="sim-speed6">10</label> 	
-	  <input type="radio" id="sim-speed6-5" name="radios-sim-speed" value="30" checked>
-	  <label for="sim-speed6-5">30</label> 	
-	  <input type="radio" id="sim-speed7" name="radios-sim-speed" value="50">
-	  <label for="sim-speed7">50</label> 	
-	  <input type="radio" id="sim-speed8" name="radios-sim-speed" value="100">
-	  <label for="sim-speed8">100</label> 	
-	  <input type="radio" id="sim-speed9" name="radios-sim-speed" value="200">
-	  <label for="sim-speed9">200</label> 	
-	  <input type="radio" id="sim-speed10" name="radios-sim-speed" value="500">
-	  <label for="sim-speed10">500</label> 	
-	  <input type="radio" id="sim-speed11" name="radios-sim-speed" value="1000">
-	  <label for="sim-speed11">1000</label> 	
-	  <input type="radio" id="sim-speed12" name="radios-sim-speed" value="3000">
-	  <label for="sim-speed12">3000</label>
-	</div>
-      </div>
-      <div id="smoothing" class="controls-row">
-	<div class="controls-cell label"><span title="Filter higher frequencies">filter:</span></div>
-	<div class="controls-cell">
-	<input type="radio" id="smoothing-radio1" name="radios-smoothing" value="1" >
-	<label for="smoothing-radio1">No</label>
-	
-	<input type="radio" id="smoothing-radio3" name="radios-smoothing" value="4" checked>
-	<label for="smoothing-radio3">4</label>
-	
-	<input type="radio" id="smoothing-radio4" name="radios-smoothing" value="12" >
-	<label for="smoothing-radio4">12</label>
-	
-	<input type="radio" id="smoothing-radio5" name="radios-smoothing" value="48" >
-	<label for="smoothing-radio5">48</label>
-	
-	<input type="radio" id="smoothing-radio6" name="radios-smoothing" value="120" >
-	<label for="smoothing-radio6">120</label>
-	</div>
-      </div>
-
-      <div id="trails" class="controls-row">
-	<div class="controls-cell label">trails:</div>
-	<div class="controls-cell">
-	<input type="radio" id="trails-radio1" name="radios-trails" value="1.0" >
-	<label for="trails-radio1">No</label>
-
-	<input type="radio" id="trails-radio2" name="radios-trails" value=".15" >
-	<label for="trails-radio2">Short</label>
-
-	<input type="radio" id="trails-radio3" name="radios-trails" value=".05" checked>
-	<label for="trails-radio3">Normal</label>
-
-	<input type="radio" id="trails-radio5" name="radios-trails" value=".005" >
-	<label for="trails-radio5">Long</label>
-	
-	<input type="radio" id="trails-radio6" name="radios-trails" value="0" >
-	<label for="trails-radio6">Infinite</label>
-	</div>
-      </div>
-    </div> <!-- end of controls -->
-
     <h2>Scene library</h3>
     <div>
       <ul id="library" class="library"></ul>  
