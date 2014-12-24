@@ -2,21 +2,17 @@
 <html>
   <meta charset="utf-8"> 
   <head>
-    <title>Flight</title>
+    <title>Single Rotatoin cellular automaton with smooth interpolation</title>
     <link rel="stylesheet" type="text/css" href="styles.css"/>
   </head>
   <body>
     <div id="clear-box">
       <button id="btn-clear" class="transparent-image-button" title="Remove everything">
-	<img src="clear-all.svg" style="width:4em;height:4em">
+	<img src="images/clear-all.svg" style="width:4em;height:4em">
       </button>
     </div>
 
-    <div id="main-screen">
-      <canvas id="sim-canvas" width="800" height="600"></canvas>
-    </div>
-
-    <div id="controls" style="view:hidden">
+    <div id="controls">
       <div id="speed" class="controls-row">
 	<div class="controls-cell label"><span title="Generations per second">gen/s</span>: </div>
 	<div class="controls-cell">
@@ -86,7 +82,12 @@
 	<label for="trails-radio6">Infinite</label>
 	</div>
       </div>
+    </div> <!-- end of controls -->
+
+    <div id="main-screen">
+      <canvas id="sim-canvas" width="800" height="600"></canvas>
     </div>
+
     
     <h2>Scene library</h3>
     <div>

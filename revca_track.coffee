@@ -36,13 +36,28 @@ Transforms =
   flipY:  (dx, dy)-> [dx, -dy]
   flipDiag:  (dx, dy)-> [dy, dx]
   flipADiag: (dx, dy)-> [-dy, -dx]
- 
+
+fillZeros = (arr) ->
+  for i in [0...arr.length] by 1
+    arr[i] = 0
+  return arr
+  
+newInt8Array = if Int8Array?
+    (sz) -> new Int8Array sz
+  else
+    (sz) -> fillZeros new Array sz
+    
+newFloatArray = if Float32Array?
+    (sz) -> new Float32Array sz
+  else
+    (sz) -> fillZeros new Array sz
+
 exports.Simulator = class Simulator
   constructor: (@width, @height, rule)->
     @cells = []
     #values are indices of cells array + 1
-    @field = new Int8Array @width*@height
-    @field1 = new Int8Array @width*@height
+    @field = newInt8Array @width*@height
+    @field1 = newInt8Array @width*@height
     @phase = 0
     @rule = rule ? {1: Transforms.rot90, 2: Transforms.rot90, 4:Transforms.rot90, 8:Transforms.rot90}
     
@@ -77,7 +92,7 @@ exports.Simulator = class Simulator
   clear: ->
     @cells = []
     @phase = 0
-    @field = new Int8Array @width*@height
+    @field = newInt8Array @width*@height
     return 
   #Binary code of the 2x2 block, 0 to 15
   blockCode: (x, y) ->
@@ -150,7 +165,7 @@ lanczosInterpolator = (a, n, downscale=1) ->
   interpolate = ( states, offset )->
     if offset >= n or offset < 0
       throw new Error "Incorrect offset, must be in [0; #{n}) "
-    sum = new Float32Array states[0].length
+    sum = newFloatArray states[0].length
     for state, i in states
       idx = i * n + offset
       break if idx >= kernel.length
@@ -197,18 +212,27 @@ exports.CircularInterpolatingSimulator = class CircularInterpolatingSimulator
     @states = ([] for i in [0 ... @neededStates])
     return
     
-  _appendStateToBuffer: (tail) ->
-    @states = for state in @states
-      newState = new Float32Array(state.length + tail.length)
-      newState.set state
-      newState.set tail, state.length
-      newState
-    return
+  _appendStateToBuffer:
+    if Float32Array?
+      (tail) ->
+        @states = for state in @states
+          newState = newFloatArray(state.length + tail.length)
+          newState.set state
+          newState.set tail, state.length
+          newState
+        return
+    else
+      (tail) ->
+        @states = for state in @states
+          state.concat tail
+        return
+        
+    
     
   _getState: -> @_mapState @simulator.step()
   
   _mapState: (s) ->
-    s1 = new Float32Array s.length*2
+    s1 = newFloatArray s.length*2
     iw = 2 * Math.PI / @simulator.width
     ih = 2 * Math.PI / @simulator.height
     for i in [0...s.length] by 2
@@ -226,7 +250,7 @@ exports.CircularInterpolatingSimulator = class CircularInterpolatingSimulator
     ky = @simulator.height / (2*Math.PI)
     PI2 = Math.PI*2
     wrapPi = (x) -> if x > 0 then x else x + PI2
-    s1 = new Float32Array s.length/2
+    s1 = newFloatArray s.length/2
     for i in [0..s.length] by 4
       j = (i/2) |0
       cx = s[i]

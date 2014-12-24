@@ -2,7 +2,7 @@ singlerot-smooth
 ================
 "Single Rotation" cellular automaton demonstration with Lanczos smoothing.
 
-![Sample picture](./singlerot-smooth.png)
+![Sample picture](./images/singlerot-smooth.png)
 
 [Single Rotation](http://dmishin.blogspot.ru/2013/11/the-single-rotation-rule-remarkably.html)
 is a very simple yet rich reversible cellular automaton.

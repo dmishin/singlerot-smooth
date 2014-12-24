@@ -6,8 +6,7 @@ input[type=radio] {
     display:none;
     margin:0 0;
     padding:0 0;
-}
- 
+} 
 /*
   Change the look'n'feel of labels (which are adjacent to radiobuttons).
   Add some margin, padding to label
@@ -21,19 +20,14 @@ input[type=radio] + label {
 input[type=radio] + label:hover {
     background-color: #353;
 }
-input[type=radio] + label:focus {
-    background-color: #335;
-}
 /*
  Change background color for label next to checked radio button
  to make it look like highlighted button
 */
 input[type=radio]:checked + label {
-   background-image: none;
-   background-color:#7dc410;
+   background-color: #7dc410;
    color: #000;
 }
-
 
 /* ******************************
 *  Main window layout 
@@ -42,18 +36,15 @@ body{
     color: #fff;
     background-color: #222;
     margin: 0;
-}
-
-header{
-    color: #adf;
-    font-size: 2em;
-    margin-bottom: 0.5em;
+    padding: 0;
 }
 
 #controls{
     background-color: rgba(255,255,255,0.1);
     width: 100%;
+    overflow: hidden;
 }
+
 #clear-box{
     position: absolute;
     top: 0;

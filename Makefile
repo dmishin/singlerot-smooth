@@ -17,3 +17,10 @@ clean:
 	   flight.min.js
 
 
+publish: flight.js
+	cp -r flight.js singlerot-smooth.html styles.css images ../dmishin.github.io/singlerot-smooth
+	cd ../dmishin.github.io/singlerot-smooth && \
+	git add -A && \
+	git commit -m "Publish automatically" && \
+	git push 
+

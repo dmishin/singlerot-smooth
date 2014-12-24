@@ -1,5 +1,13 @@
 {CircularInterpolatingSimulator, Simulator, makeRule} = require "./revca_track"
 
+# shim layer with setTimeout fallback
+unless window.requestAnimationFrame?
+  window.requestAnimationFrame =
+    window.webkitRequestAnimationFrame or
+    window.mozRequestAnimationFrame or
+    (callback) -> window.setTimeout(callback, 1000 / 30)
+
+
 parseRle = (rle) ->
   x = 0
   y = 0
@@ -43,7 +51,7 @@ parseRle = (rle) ->
 #  color ::= <any CSS color description, with space replaced by "_"
 parseFieldDescriptionlLanguage = (fdlText, defaultPalette) ->
   FLD =
-    rle: /^\s*rle\s+([bo0-9\$]+)\s*$/
+    rle: /^\s*([bo0-9\$]+)\s*$/
     at:  /^\s*at\s+(\d+)\s+(\d+)\s*$/
     colors: /^\s*colors\s+(.+)$/
     comment: /^\s*--\s*(.*)$/
@@ -356,84 +364,84 @@ class Library
 defaultLibrary = [
   """--Fastest diagonal
      at 0 0
-     rle obo$obo$b2o
+     obo$obo$b2o
      at 16 0
-     rle 	obo$o$obo2$o$o
+     obo$o$obo2$o$o
      at 26 0
-     rle 	bo$2b2o$3bo
+     bo$2b2o$3bo
      at 36 0
-     rle 3o$o$bo
+     3o$o$bo
      at 48 0
-     rle 	o3bo$obo$6bo$4bobo$4bo
+     o3bo$obo$6bo$4bobo$4bo
   """,
   """
   --Extensible zigzag
   at 0 0
-  rle 26bo$24bobo$25bo3$25bo$20bo3bobo$18bobo5bo$19bo3$19bo$14bo3bobo$12bobo5bo$13bo3$13bo$8bo3bobo$6bobo5bo$7bo3$7bo$2bo3bobo$obo5bo$bo
+  26bo$24bobo$25bo3$25bo$20bo3bobo$18bobo5bo$19bo3$19bo$14bo3bobo$12bobo5bo$13bo3$13bo$8bo3bobo$6bobo5bo$7bo3$7bo$2bo3bobo$obo5bo$bo
   """,
   """
   --Extensible line
   at 0 0
-  rle 59bobo2$46bo2bo4b3o$39bobo2bo2bo12b2o$27bobo7bo12bo5bo$32b2o7bo4bo3bo$22bobo4bo4bo9bo$9bo2b2o4b2o2bo6bo$5bo7bo2bo7bo9bo$2bobo4bo4bo4bo$bo4bo2$2bo
+  59bobo2$46bo2bo4b3o$39bobo2bo2bo12b2o$27bobo7bo12bo5bo$32b2o7bo4bo3bo$22bobo4bo4bo9bo$9bo2b2o4b2o2bo6bo$5bo7bo2bo7bo9bo$2bobo4bo4bo4bo$bo4bo2$2bo
   """,
   """
   --Extensible long period
   at 0 0
-  rle $bo$bo2$2bo$2bo3$2bo$2bo$3bo$5bo5$2bob2o3$6bo4$5bo$3bo2bo2$7bo5$5bo2bo3$6bo$8bo4$6bobo$7bo$10bo5$8bo$10bo$9bo2$10bo
+  $bo$bo2$2bo$2bo3$2bo$2bo$3bo$5bo5$2bob2o3$6bo4$5bo$3bo2bo2$7bo5$5bo2bo3$6bo$8bo4$6bobo$7bo$10bo5$8bo$10bo$9bo2$10bo
   """,
   """
   --Rotating line
   at 38 20
-  rle b2o2$b2o2$b2o2$b2o2$3bo$2bo
+  b2o2$b2o2$b2o2$b2o2$3bo$2bo
   """,
   """
   --12-celler
   at 0 26
-  rle 2b4o$4b2o$bo2bo$2bo$bo2bobo
+  2b4o$4b2o$bo2bo$2bo$bo2bobo
   """,
   """
   --Period 12k
   at 10 0
-  rle 	6bo2$b3o2$3b3o
+  6bo2$b3o2$3b3o
   """,
   """
   --Fast 11-celler
   at 0 26
-  rle 	b3o$2bo$3bo$bo$2obo$2o
+  b3o$2bo$3bo$bo$2obo$2o
   """,
   """
   --Wall collision
   at 10 20
-  rle $4b2o10b2o2$4b2o10b2o4$2o8b2o2$2o8b2o
+  $4b2o10b2o2$4b2o10b2o4$2o8b2o2$2o8b2o
   at 40 20
   colors #00e
-  rle $2o$2o$2o$2o$2o$2o$2o$2o$2o$2o
+  $2o$2o$2o$2o$2o$2o$2o$2o$2o$2o
   """,
   """
   --Light SS vs wall
   at 20 10
-rle bo2$b2obo
+bo2$b2obo
 at 40 20
 colors #00f
-rle $2o$2o$2o$2o$2o$2o$2o$2o$2o$2o
+$2o$2o$2o$2o$2o$2o$2o$2o$2o$2o
   """,
   """
   --Bird i nthe cage
   at 34 14
-rle $2o$bo$2bo
-at 30 10
-colors #aaa
-rle b20o$22o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$22o$b20o
+  $2o$bo$2bo
+  at 30 10
+  colors #aaa
+  b20o$22o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$22o$b20o
   """,
   """
   --Lightest SS
   at 10 10
-rle $2o2$2o3$38bo$2o36bo$bo8bobo9bo6b3o$2bo6b2o9bobo6bo8bo$20bo17bo
+$2o2$2o3$38bo$2o36bo$bo8bobo9bo6b3o$2bo6b2o9bobo6bo8bo$20bo17bo
   """,
   """
   --Fastest orthogonal
   at 14 2
-  rle 2bo38bo$2bo12bo5bo3bo8bo8bo5bobo$bo12bo6bo2bo10bo7bo5bobo$11bo11b2o6b2o2bo$b3o8bo11b2o9bo6bo$15bo7bo17b3o$11b2obo$43bo
+  2bo38bo$2bo12bo5bo3bo8bo8bo5bobo$bo12bo6bo2bo10bo7bo5bobo$11bo11b2o6b2o2bo$b3o8bo11b2o9bo6bo$15bo7bo17b3o$11b2obo$43bo
   """
 ]
 
