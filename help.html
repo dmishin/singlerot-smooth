@@ -14,7 +14,7 @@
     <p>It's a simulator of
     the <a href="http://dmishin.blogspot.com/2013/11/the-single-rotation-rule-remarkably.html">Single
     Rotation</a> cellular automaton, that tracks positions of the
-    cells and uses Lancsoz interpolation to add an intermediate
+    cells and uses Lanczos interpolation to add an intermediate
     frames. Its primary purpose is a nice visual effect, for
     experimenting with reversible cellular automata
     see <a href="http://dmishin.github.io/js-revca/index.html?rule=0,2,8,3,1,5,6,7,4,9,10,11,12,13,14,15&step=8&frame_delay=100&size=64x64&cell_size=6,1&phase=0">online
@@ -29,16 +29,16 @@
       <img src="images/single-rotation.gif">
     </figure>
     <p>
-      Despite the extreme simpliciry, this rule produces infinitely complex behavior, resembling the iconic <a href="http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Game of Life</a>. One important difference is that "Single Rotation" is time-reversible, that is: for every state it is always possible to calculate previous state. You can play with this rule in the <a href="http://dmishin.github.io/js-revca/index.html?rule=0,2,8,3,1,5,6,7,4,9,10,11,12,13,14,15&step=8&frame_delay=100&size=64x64&cell_size=6,1&phase=0">online simulator</a>.
+      Despite the extreme simplicity, this rule produces infinitely complex behavior, resembling the iconic <a href="http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Game of Life</a>. One important difference is that "Single Rotation" is time-reversible, that is: for every state it is always possible to calculate previous state. You can play with this rule in the <a href="http://dmishin.github.io/js-revca/index.html?rule=0,2,8,3,1,5,6,7,4,9,10,11,12,13,14,15&step=8&frame_delay=100&size=64x64&cell_size=6,1&phase=0">online simulator</a>.
     </p>
     <h2>Cell tracking</h2>
-    <p>"Single Rotation" rule also preserves total number of the alive cells. Moreover, from the definition of the rule, it is clear that it is possible to track position of the every individual alive cell. This siumlator does this.
+    <p>"Single Rotation" rule also preserves total number of the alive cells. Moreover, from the definition of the rule it is clear that it is possible to track position of the every individual alive cell. This simulator does this.
     </p>
     <h2>Interpolation</h2>
-    <p>On each generation, alive cells always move by 1 cell in some direciton. To make animation more visually pleasing, this simulator interpolates intermediate positions, using <a href="http://en.wikipedia.org/wiki/Lanczos_resampling">Lanczos resampling</a>.
+    <p>Cell coordinates are discrete, alive cells are "jumping" by 1 in some direction. To make animation more visually pleasing, this simulator interpolates intermediate positions, using <a href="http://en.wikipedia.org/wiki/Lanczos_resampling">Lanczos resampling</a>.
     </p>
     <h2>Oscillation filtering</h2>
-    <p>One can easily check that in the "Single Rotation" rule a single cell would constantly rotate with period 4. To make this less annoying, a possibility to filter higher frequencies of the cell movement is added. For example, when "filter" setting is 4, then every oscillation with period 4 or less is replaced by the constant averave value, and rotating cells visually stand still. Higher filter setting allow to cease oscillaitions of higher period. This is also done by Lanczos filter.
+    <p>One can easily check that in the "Single Rotation" rule a single cell would constantly rotate with period 4. To make this less annoying, a possibility to filter higher frequencies of the cell movement is added. For example, when "filter" setting is 4, then every oscillation with period 4 or less is replaced by the constant average value, and rotating cells visually stand still. Higher filter setting allow to cease oscillaitions of higher period. This is also done by Lanczos filter.
     </p>
     <h1>More information</h1>
     <p> Here are some my pages, where you can find more information about reversible cellular automata and Single Rotation rule.
@@ -50,7 +50,7 @@
       </ul>
     </p>
     <h1>Source code and license</h1>
-    <p>Source code is <a href="https://github.com/dmishin/singlerot-smooth">available on Github</a>, under the permissive MIT license. It is written in Coffeescript.
+    <p>Source code is <a href="https://github.com/dmishin/singlerot-smooth">available on Github</a>, under the permissive MIT license. It is written in CoffeeScript.
     </p>
   </body>
 </html>
