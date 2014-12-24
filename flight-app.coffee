@@ -164,6 +164,7 @@ class SimulatorApp
     @library = new Library
     @library.loadItem = (fdl)=>@_loadFdl(fdl)
 
+    @_updatePlayBtn()
     @_delayedLoadLibrary()
     
   _delayedLoadLibrary: ->
@@ -228,7 +229,8 @@ class SimulatorApp
     addOnRadioChange "radios-trails", (e)=>@_updateTrails()
     document.getElementById("btn-clear").addEventListener "click", (e)=>@clearAll()
     document.getElementById("btn-random").addEventListener "click", (e)=>@putRandomPattern()
-    document.getElementById("btn-play-pause").addEventListener "click", (e)=>@togglePlay()
+    document.getElementById("btn-play").addEventListener "click", (e)=>@play() unless @playing
+    document.getElementById("btn-pause").addEventListener "click", (e)=>@stop() if @playing
     
     document.getElementById("btn-load-fdl").addEventListener "click", (e)=>
       @_loadFdl document.getElementById("fld-text").value
@@ -300,17 +302,21 @@ class SimulatorApp
       #ctx.stroke()
     return
 
-  stop: ->
-    @playing = false
 
   togglePlay: ->
     if @playing
       @stop()
-      setButtonImgSrc "btn-play-pause", "images/ic_play_arrow_24px.svg"
     else
       @play()
-      setButtonImgSrc "btn-play-pause", "images/ic_pause_24px.svg"
-  
+      
+  _updatePlayBtn: ->
+    document.getElementById("btn-play").style.display = if @playing then "none" else ""
+    document.getElementById("btn-pause").style.display = if @playing then "" else "none"
+      
+  stop: ->
+    @playing = false
+    @_updatePlayBtn()
+    
   play: ->
     if @playing
       console.log "Already playing"
@@ -320,6 +326,7 @@ class SimulatorApp
     previousFrameTime = null
     stepsLeft = 1
     @playing = true
+    @_updatePlayBtn()
     
     drawFunc = =>
       unless @playing
