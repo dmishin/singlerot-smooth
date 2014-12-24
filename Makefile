@@ -21,7 +21,7 @@ clean:
 
 
 publish: flight.js
-	cp -r flight.js default_library.js singlerot-smooth.html help.html styles.css images ../dmishin.github.io/singlerot-smooth
+	cp -r flight.js default_library.js singlerot-smooth.html help.html help.css styles.css images ../dmishin.github.io/singlerot-smooth
 	cd ../dmishin.github.io/singlerot-smooth && \
 	git add -A && \
 	git commit -m "Publish automatically" && \

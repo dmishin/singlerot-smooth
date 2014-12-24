@@ -159,9 +159,7 @@ class SimulatorApp
     @_updateTrails()
     @_onResize()
 
-    randomPatternSize = Math.min(sim.height, sim.width)*0.8
-    nCells = randomPatternSize**2*(200/(60**2)) #same as on my test screen
-    @putRandomPattern nCells, randomPatternSize*0.5
+    @putRandomPattern()
 
     @library = new Library
     @library.loadItem = (fdl)=>@_loadFdl(fdl)
@@ -173,9 +171,14 @@ class SimulatorApp
       for item in window.defaultLibrary
         @library.addFdl item, @colorPalette
     window.setTimeout doLoad, 100
-  
+
+  #Just some plausible random initialization  
   putRandomPattern: (numCells, patternSize)->
     s = @isim.simulator
+    
+    patternSize = Math.min(s.height, s.width)*0.4
+    numCells = patternSize**2*0.22 #same as on my test screen
+    
     @putPattern (for i in [0...numCells] by 1
       f = Math.random()*2*Math.PI
       r = (Math.random()*2-1) * patternSize
@@ -183,7 +186,7 @@ class SimulatorApp
       x = Math.round( s.width*0.5 + r*Math.cos(f))
       y = Math.round( s.height*0.5 + r*Math.sin(f))
       [x|0,y|0])
-
+    
   _updateSimSpeed: ->  @gensPerSecond = parseFloat getRadioValue("radios-sim-speed", "0")
   _updateSmoothing: -> @isim.setSmoothing parseInt getRadioValue("radios-smoothing", "0"), 10
   _updateTrails: ->    @fadeRatio = parseFloat getRadioValue("radios-trails", "0.9")
@@ -198,17 +201,33 @@ class SimulatorApp
     @isim.clear()
     @isim.put pp, cx, cy
     @colors = cc
+    @_updateClearBtnIcon()
     @_clearBackground()
     window.scrollTo 0, 0
     
   clearAll: ->
     @isim.clear()
     @_clearBackground() unless @playing
+    @_updateClearBtnIcon()
+    
+  _updateClearBtnIcon: ->
+    clearVisible = @isim.simulator.cells.length isnt 0      
+    if @_clearBtnVisibility isnt clearVisible
+      @_clearBtnVisibility = clearVisible
+      if clearVisible
+        document.getElementById("btn-clear").style.display=""
+        document.getElementById("btn-random").style.display="none"
+      else
+        document.getElementById("btn-clear").style.display="none"
+        document.getElementById("btn-random").style.display=""
+    return
+          
   bindEvents: ->
     addOnRadioChange "radios-sim-speed", (e)=>@_updateSimSpeed()
     addOnRadioChange "radios-smoothing", (e)=>@_updateSmoothing()
     addOnRadioChange "radios-trails", (e)=>@_updateTrails()
     document.getElementById("btn-clear").addEventListener "click", (e)=>@clearAll()
+    document.getElementById("btn-random").addEventListener "click", (e)=>@putRandomPattern()
     document.getElementById("btn-play-pause").addEventListener "click", (e)=>@togglePlay()
     
     document.getElementById("btn-load-fdl").addEventListener "click", (e)=>
@@ -220,7 +239,7 @@ class SimulatorApp
       ix = (x/@size)|0
       iy = (y/@size)|0
       @putCell ix, iy
-
+      @_updateClearBtnIcon()
       e.preventDefault()
       
   _onResize: ->
@@ -246,6 +265,8 @@ class SimulatorApp
       if @isim.putCell ix, iy
         @colors.push (color ? @colorPalette[@colors.length % @colorPalette.length])
         @drawFrame() unless @playing
+        @_updateClearBtnIcon()
+
   #put several cells. Colors is optional
   putPattern: (pattern, colors) ->
     if colors? and (colors.length is 0) then throw new Error("EMpty color palette")
@@ -254,6 +275,7 @@ class SimulatorApp
     for i in [0...numCells]
       @colors.push palette[@colors.length % palette.length]
     @drawFrame() unless @playing
+    @_updateClearBtnIcon()
     return
   drawFrame: ->
     #console.log "Drawing frame"

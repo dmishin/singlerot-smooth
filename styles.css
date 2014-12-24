@@ -45,6 +45,11 @@ body{
     overflow: hidden;
 }
 
+.top-right-toolbar{
+    position: absolute;
+    right:0;
+}
+
 .top-toolbar{
     position: absolute;
     left:0;

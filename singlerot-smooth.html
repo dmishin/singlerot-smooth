@@ -2,22 +2,28 @@
 <html>
   <meta charset="utf-8"> 
   <head>
-    <title>Single Rotatoin cellular automaton with smooth interpolation</title>
+    <title>Single Rotation cellular automaton with smooth interpolation</title>
     <link rel="stylesheet" type="text/css" href="styles.css"/>
   </head>
   <body>
     <div id="main-screen">
       <div class="top-toolbar">
-	<button id="btn-clear" class="transparent-image-button" title="Clear field">
-	  <img src="images/ic_clear_24px.svg" style="width:3em;height:3em">
-	</button>
 	<button id="btn-play-pause" class="transparent-image-button" title="Play/Pause">
 	  <img src="images/ic_pause_24px.svg" style="width:3em;height:3em">
 	</button>
-	<a href="help.html" target="_blank" class="transparent-image-link" title="Help">
+	<button id="btn-clear" class="transparent-image-button" title="Clear field">
+	  <img src="images/ic_clear_24px.svg" style="width:3em;height:3em">
+	</button>
+	<button id="btn-random" class="transparent-image-button" title="Random pattern">
+	  <img src="images/ic_help_24px.svg" style="width:3em;height:3em">
+	</button>
+      </div>
+      <div class="top-right-toolbar">
+	<a href="help.html" target="_blank" class="transparent-image-link" title="What's this?">
 	  <img src="images/ic_help_24px.svg" style="width:3em;height:3em">
 	</a>
       </div>
+      
       <canvas id="sim-canvas" width="800" height="600"></canvas>
     </div>
 
@@ -124,8 +130,8 @@
 	  </dd>
 	  
 	  <dt><span class="command">colors</span> <span class="arg1">COLOR-LIST</span></dt>
-	  <dd>Sets current color pattern. When adding patterns, new cell colors are taken from this pattern.
-	    <span class="arg1">COLOR-LIST</span> can be either :-separated list of any CSS colors, or the text "default". In the latter case, pattern is returned to the default.
+	  <dd>Sets current color palette. When adding patterns, new cell colors are taken from this pattern.
+	    <span class="arg1">COLOR-LIST</span> can be either a ":"-separated list of any CSS colors, or the text "default". In the latter case, pattern is returned to the default. Example: <span class="command">colors</span> <span class="arg1">red:#00ff00:rgb(0,0,255)</span>.
 	  </dd>
 	</dl>
 	Effect of the <span class="command">at</span> and <span class="command">colors</span> statements lasts until they are redefined. Additional spaces and empty lines are ignored.
