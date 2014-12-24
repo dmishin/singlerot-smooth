@@ -196,9 +196,13 @@ exports.CircularInterpolatingSimulator = class CircularInterpolatingSimulator
     [@interpolator, @neededStates] = lanczosInterpolator @order, @timeSteps, newSmoothing
     @_fillBuffer()
 
-  put: (pattern) ->
+  put: (pattern, x0=0, y0=0) ->
     newStates = []
+    w = @simulator.width
+    h = @simulator.height
     for [x,y] in pattern
+      x = mod (x+x0), w
+      y = mod (y+y0), h
       if @simulator.putCell(x,y)?
         newStates.push x
         newStates.push y

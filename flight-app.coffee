@@ -52,7 +52,7 @@ parseRle = (rle) ->
 parseFieldDescriptionlLanguage = (fdlText, defaultPalette) ->
   FLD =
     rle: /^\s*([bo0-9\$]+)\s*$/
-    at:  /^\s*at\s+(\d+)\s+(\d+)\s*$/
+    at:  /^\s*at\s+(-?\d+)\s+(-?\d+)\s*$/
     colors: /^\s*colors\s+(.+)$/
     comment: /^\s*--\s*(.*)$/
     empty: /^\s*$/
@@ -108,6 +108,13 @@ addOnRadioChange = (radioName, handler) ->
   for radio in document.getElementsByName radioName
     radio.addEventListener "change", handler
   return
+
+
+setButtonImgSrc = (btnId, src)->
+  btn = document.getElementById btnId
+  img = btn.getElementsByTagName("img")[0]
+  img.src = src
+  return img
 
 class SimulatorApp
 #drawCanvasSimulation
@@ -176,23 +183,28 @@ class SimulatorApp
   _updateSmoothing: -> @isim.setSmoothing parseInt getRadioValue("radios-smoothing", "0"), 10
   _updateTrails: ->    @fadeRatio = parseFloat getRadioValue("radios-trails", "0.9")
   _loadFdl: (fdl) ->
+    cx = (@isim.simulator.width/2) & ~1
+    cy = (@isim.simulator.height/2) & ~1
     try
-      [pp, cc, fldSize] = parseFieldDescriptionlLanguage fdl, @colorPalette
+      [pp, cc] = parseFieldDescriptionlLanguage fdl, @colorPalette
       document.getElementById("fld-text").value = fdl
     catch e
       alert "Failed to parse: #{e}"
     @isim.clear()
-    @isim.put pp
+    @isim.put pp, cx, cy
     @colors = cc
     @_clearBackground()
     window.scrollTo 0, 0
     
-    
+  clearAll: ->
+    @isim.clear()
+    @_clearBackground() unless @playing
   bindEvents: ->
     addOnRadioChange "radios-sim-speed", (e)=>@_updateSimSpeed()
     addOnRadioChange "radios-smoothing", (e)=>@_updateSmoothing()
     addOnRadioChange "radios-trails", (e)=>@_updateTrails()
-    document.getElementById("btn-clear").addEventListener "click", (e)=>@isim.clear()
+    document.getElementById("btn-clear").addEventListener "click", (e)=>@clearAll()
+    document.getElementById("btn-play-pause").addEventListener "click", (e)=>@togglePlay()
     
     document.getElementById("btn-load-fdl").addEventListener "click", (e)=>
       @_loadFdl document.getElementById("fld-text").value
@@ -263,7 +275,15 @@ class SimulatorApp
 
   stop: ->
     @playing = false
-    
+
+  togglePlay: ->
+    if @playing
+      @stop()
+      setButtonImgSrc "btn-play-pause", "images/ic_play_arrow_24px.svg"
+    else
+      @play()
+      setButtonImgSrc "btn-play-pause", "images/ic_pause_24px.svg"
+  
   play: ->
     if @playing
       console.log "Already playing"
@@ -346,7 +366,7 @@ class Library
     [x0,y0,x1,y1] = patternBounds pattern
     iw = x1-x0+1
     ih = y1-y0+1
-    r = Math.max(1, Math.min(w/iw, h/ih))|0
+    r = Math.max(2, Math.min(w/iw, h/ih))|0
     for [x,y],i in pattern
       ix = ((x - x0 - iw/2 + 0.5) * r + w/2)|0
       iy = ((y - y0 - ih/2 + 0.5) * r + h/2)|0
@@ -363,84 +383,84 @@ class Library
 
 defaultLibrary = [
   """--Fastest diagonal
-     at 0 0
+     at -24 -20
      obo$obo$b2o
-     at 16 0
+     at -8 -20
      obo$o$obo2$o$o
-     at 26 0
+     at 2 -20
      bo$2b2o$3bo
-     at 36 0
+     at 12 -20
      3o$o$bo
-     at 48 0
+     at 24 -20
      o3bo$obo$6bo$4bobo$4bo
   """,
   """
   --Extensible zigzag
-  at 0 0
+  at -20 -20
   26bo$24bobo$25bo3$25bo$20bo3bobo$18bobo5bo$19bo3$19bo$14bo3bobo$12bobo5bo$13bo3$13bo$8bo3bobo$6bobo5bo$7bo3$7bo$2bo3bobo$obo5bo$bo
   """,
   """
   --Extensible line
-  at 0 0
+  at -36 -16
   59bobo2$46bo2bo4b3o$39bobo2bo2bo12b2o$27bobo7bo12bo5bo$32b2o7bo4bo3bo$22bobo4bo4bo9bo$9bo2b2o4b2o2bo6bo$5bo7bo2bo7bo9bo$2bobo4bo4bo4bo$bo4bo2$2bo
   """,
   """
   --Extensible long period
-  at 0 0
+  at -16 -26
   $bo$bo2$2bo$2bo3$2bo$2bo$3bo$5bo5$2bob2o3$6bo4$5bo$3bo2bo2$7bo5$5bo2bo3$6bo$8bo4$6bobo$7bo$10bo5$8bo$10bo$9bo2$10bo
   """,
   """
   --Rotating line
-  at 38 20
-  b2o2$b2o2$b2o2$b2o2$3bo$2bo
+  at 0 0
+  b2o2$b2o2$b2o2$b2o2$b2o2$b2o2$3bo$2bo
   """,
   """
   --12-celler
-  at 0 26
+  at -20 0
   2b4o$4b2o$bo2bo$2bo$bo2bobo
   """,
   """
   --Period 12k
-  at 10 0
+  at -10 -10
   6bo2$b3o2$3b3o
   """,
   """
   --Fast 11-celler
-  at 0 26
+  at -20 -2
   b3o$2bo$3bo$bo$2obo$2o
   """,
   """
   --Wall collision
-  at 10 20
+  at -30 -10
   $4b2o10b2o2$4b2o10b2o4$2o8b2o2$2o8b2o
-  at 40 20
+  at 0 -10
   colors #00e
   $2o$2o$2o$2o$2o$2o$2o$2o$2o$2o
   """,
   """
   --Light SS vs wall
-  at 20 10
-bo2$b2obo
-at 40 20
-colors #00f
-$2o$2o$2o$2o$2o$2o$2o$2o$2o$2o
+  at -20 -20
+  bo2$b2obo
+  at 0 -20
+  colors #00f
+  $2o$2o$2o$2o$2o$2o$2o$2o$2o$2o
   """,
   """
   --Bird i nthe cage
-  at 34 14
+  at -6 -6
   $2o$bo$2bo
-  at 30 10
+  at -10 -10
   colors #aaa
   b20o$22o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$22o$b20o
   """,
   """
-  --Lightest SS
-  at 10 10
-$2o2$2o3$38bo$2o36bo$bo8bobo9bo6b3o$2bo6b2o9bobo6bo8bo$20bo17bo
+  --Lightest spaceships
+  at -30 -20
+  $2o2$2o3$38bo$2o36bo$bo8bobo9bo6b3o$2bo6b2o9bobo6bo8bo$20bo17bo
   """,
   """
   --Fastest orthogonal
-  at 14 2
+  at -26 -18
   2bo38bo$2bo12bo5bo3bo8bo8bo5bobo$bo12bo6bo2bo10bo7bo5bobo$11bo11b2o6b2o2bo$b3o8bo11b2o9bo6bo$15bo7bo17b3o$11b2obo$43bo
   """
 ]

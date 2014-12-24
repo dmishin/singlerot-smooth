@@ -6,19 +6,29 @@
     <link rel="stylesheet" type="text/css" href="styles.css"/>
   </head>
   <body>
-    <div id="clear-box">
-      <button id="btn-clear" class="transparent-image-button" title="Remove everything">
-	<img src="images/clear-all.svg" style="width:4em;height:4em">
-      </button>
+    <div id="clear-box" class="grow-menu">
+
+    </div>
+
+    <div id="main-screen">
+      <div class="top-toolbar">
+	<button id="btn-clear" class="transparent-image-button" title="Clear field">
+	  <img src="images/ic_clear_24px.svg" style="width:3em;height:3em">
+	</button>
+	<button id="btn-play-pause" class="transparent-image-button" title="Play/Pause">
+	  <img src="images/ic_pause_24px.svg" style="width:3em;height:3em">
+	</button>
+	<a href="help.html" target="_blank" class="transparent-image-link" title="Help">
+	  <img src="images/ic_help_24px.svg" style="width:3em;height:3em">
+	</a>
+      </div>
+      <canvas id="sim-canvas" width="800" height="600"></canvas>
     </div>
 
     <div id="controls">
       <div id="speed" class="controls-row">
 	<div class="controls-cell label"><span title="Generations per second">gen/s</span>: </div>
 	<div class="controls-cell">
-	  <input type="radio" id="sim-speed1" name="radios-sim-speed" value="0" >
-	  <label for="sim-speed1">0</label>
-
 	  <input type="radio" id="sim-speed4" name="radios-sim-speed" value="1">
 	  <label for="sim-speed4">1</label> 	
 
@@ -84,11 +94,6 @@
       </div>
     </div> <!-- end of controls -->
 
-    <div id="main-screen">
-      <canvas id="sim-canvas" width="800" height="600"></canvas>
-    </div>
-
-    
     <h2>Scene library</h3>
     <div>
       <ul id="library" class="library"></ul>  
@@ -97,7 +102,7 @@
     <h2>Custom scene</h3>
     <div id="scene-editor">
       <div>
-	<textarea id="fld-text"></textarea>
+	<textarea id="fld-text" spellcheck="false"></textarea>
       </div>
       <div>
 	<button id="btn-load-fdl">Load</button>
@@ -113,8 +118,14 @@
 	  <dt><span class="command">--</span> <span class="arg1">TEXT</span></dt>
 	  <dd>Defines description text. Several lines may be defined. Text can not contain semicolons (;).</dd>
 	  
-	  <dt><span class="command">rle</span> <span class="arg1">PATTERN-RLE</span></dt>
-	  <dd>Puts given RLE code at the current coorinates. Rle code is a standard format, used by many cellular automata simulators.</dd>
+	  <dt><span class="arg1">PATTERN_RLE</span></dt>
+	  <dd>Puts given RLE code at the current coorinates. Rle code is a standard format, used by many cellular automata simulators.
+	    <ul><li><span class="command">b</span> encodes empty cell,</li>
+	      <li><span class="command">o</span> - alive cell,</li>
+	      <li><span class="command">$</span> - new line,</li>
+	      <li>numbers encode repeat count of the following character.</li>
+	    </ul>
+	  </dd>
 	  
 	  <dt><span class="command">colors</span> <span class="arg1">COLOR-LIST</span></dt>
 	  <dd>Sets current color pattern. When adding patterns, new cell colors are taken from this pattern.

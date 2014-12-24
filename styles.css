@@ -45,11 +45,17 @@ body{
     overflow: hidden;
 }
 
+.top-toolbar{
+    position: absolute;
+    left:0;
+    right:0;
+    margin-left:auto;
+    margin-right:auto;
+}
 #clear-box{
     position: absolute;
     top: 0;
     right: 0;
-    z-order: 2;
 }
 #main-screen{
     margin: 0;
@@ -66,9 +72,39 @@ body{
     text-align:right;
 }
 
-button.transparent-image-button{
+.grow-menu {
+    height: 2em; /* Origional height */
+    transition:height 0.5s; /* Animation time */
+    -webkit-transition:height 0.5s; /* For Safari */
+    overflow: hidden;
+}
+.grow-menu:hover {
+    height: 8em; /* This is the height on hover */
+    background-color: rgba(255,255,255,0.2);
+}
+
+
+a.transparent-image-link{
     background: transparent;
-    border: none !important;    
+    border-style: none;
+    font-size: 1em;
+    padding: 0;
+    margin: 0;
+    outline: 0;
+}
+.transparent-image-link img{
+    opacity: 0.5;
+}
+.transparent-image-link:hover img{
+    opacity: 1.0;
+}
+
+button.transparent-image-button{
+    font-size: 1em;
+    background: transparent;
+    border: none !important;
+    padding: 0;
+    margin: 0;
 }
 .transparent-image-button img{
     opacity: 0.5;
@@ -136,3 +172,4 @@ dt{
 .arg2 {
     color: #7dc410;
 }
+
