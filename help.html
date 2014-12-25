@@ -23,7 +23,7 @@
 
     <h2>Single Rotation rule</h2>
     <p>
-      In short, this cellular automaton acts on a grid of cells, each cell can be dead or alive. On each generation, the grid is divided into 2x2 blocks, and if the block contains exactly one alive cell, it is rotated by 90&deg;. Thus "single rotation". After each generation, the 2x2 subdivision is alternated. This scheme is called <a href="http://en.wikipedia.org/wiki/Block_cellular_automaton">Margolus neighborhood</a>.
+      In short, this cellular automaton acts on a grid of cells, each cell can be dead or alive. On each generation, the grid is divided into 2x2 blocks, and if the block contains exactly one alive cell, it is rotated by 90&deg;. Thus "single rotation". After each generation, the 2x2 subdivision is alternated. This scheme is known as <a href="http://en.wikipedia.org/wiki/Block_cellular_automaton">Margolus neighborhood</a>.
     </p>
     <figure>
       <img src="images/single-rotation.gif">
@@ -38,13 +38,13 @@
     <p>Cell coordinates are discrete, alive cells are "jumping" by 1 in some direction. To make animation more visually pleasing, this simulator interpolates intermediate positions, using <a href="http://en.wikipedia.org/wiki/Lanczos_resampling">Lanczos resampling</a>.
     </p>
     <h2>Oscillation filtering</h2>
-    <p>One can easily check that in the "Single Rotation" rule a single cell would constantly rotate with period 4. To make this less annoying, a possibility to filter higher frequencies of the cell movement is added. For example, when "filter" setting is 4, then every oscillation with period 4 or less is replaced by the constant average value, and rotating cells visually stand still. Higher filter setting allow to cease oscillaitions of higher period. This is also done by Lanczos filter.
+    <p>One can easily check that in the "Single Rotation" rule a single cell would constantly rotate with period 4. To make this less annoying, a possibility to filter higher frequencies of the cell movement is added. For example, when "filter" setting is 4, then every oscillation with period 4 or less is replaced by the constant average value, and rotating cells visually stand still. Higher filter setting allow to cease oscillations of higher period. This is also done by Lanczos filter.
     </p>
     <h1>More information</h1>
     <p> Here are some my pages, where you can find more information about reversible cellular automata and Single Rotation rule.
       <ul>
 	<li><a href="http://dmishin.github.io/js-revca/index.html?rule=0,2,8,3,1,5,6,7,4,9,10,11,12,13,14,15&step=8&frame_delay=100&size=64x64&cell_size=6,1&phase=0">Online simulator</a>, uglier but more suited for experiments tool, where you can try your own patterns and rules.</li>
-	<li><a href="http://dmishin.blogspot.com/2013/11/the-single-rotation-rule-remarkably.html">Single rotation: remarcably simple and rich reversible cellular automaton</a> - a blog post about this rule, with some thoughts on its properties.</li>
+	<li><a href="http://dmishin.blogspot.com/2013/11/the-single-rotation-rule-remarkably.html">Single rotation: remarkably simple and rich reversible cellular automaton</a> - a blog post about this rule, with some thoughts on its properties.</li>
 	<li><a href="http://dmishin.github.io/singlerot-spaceships/singlerot-spaceships.html">A table of the Single Rotation spaceships</a> - result of the automatic search for the spaceships (patterns that travel along the grid). Lists more than 300 different patterns.</li>
 	<li>And a <a href="http://dmishin.blogspot.hu/2014/07/single-rotation-spaceships-205-of-them.html">blog post</a> about the above table.
       </ul>
