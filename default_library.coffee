@@ -1,5 +1,23 @@
 
 window.defaultLibrary = [
+  """--Galaxy
+  at -4 -4; 
+  $3b2o$2bobob2o$2bo5bo$7b2o$b2o$bo5bo$2b2obobo$5b2o
+  """,
+  """
+  --Lightest spaceships
+  at -26 -16
+  $2o2$2o3$38bo$2o36bo$bo8bobo9bo6b3o$2bo6b2o9bobo6bo8bo$20bo17bo
+  """,
+  """
+  -- Galaxy 1
+  at -6 -6; $6bo$2b2o3bo$bo5bo$4b2o$4b2o$2bo5bo$2bo3b2o$3bo
+  """,
+  """ --Galaxy 2
+  at -4 -4; 2bobo$obo$4b2o$2o$3bobo$bobo
+  """,
+
+
   """--Fastest diagonal
      at -24 -20
      obo$obo$b2o
@@ -13,19 +31,14 @@ window.defaultLibrary = [
      o3bo$obo$6bo$4bobo$4bo
   """,
   """
+  --Fastest orthogonal
+  at -26 -18
+  2bo38bo$2bo12bo5bo3bo8bo8bo5bobo$bo12bo6bo2bo10bo7bo5bobo$11bo11b2o6b2o2bo$b3o8bo11b2o9bo6bo$15bo7bo17b3o$11b2obo$43bo
+  """,
+  """
   --Extensible zigzag
   at -20 -20
   26bo$24bobo$25bo3$25bo$20bo3bobo$18bobo5bo$19bo3$19bo$14bo3bobo$12bobo5bo$13bo3$13bo$8bo3bobo$6bobo5bo$7bo3$7bo$2bo3bobo$obo5bo$bo
-  """,
-  """
-  --Extensible line
-  at -36 -16
-  59bobo2$46bo2bo4b3o$39bobo2bo2bo12b2o$27bobo7bo12bo5bo$32b2o7bo4bo3bo$22bobo4bo4bo9bo$9bo2b2o4b2o2bo6bo$5bo7bo2bo7bo9bo$2bobo4bo4bo4bo$bo4bo2$2bo
-  """,
-  """
-  --Extensible long period
-  at -16 -26
-  $bo$bo2$2bo$2bo3$2bo$2bo$3bo$5bo5$2bob2o3$6bo4$5bo$3bo2bo2$7bo5$5bo2bo3$6bo$8bo4$6bobo$7bo$10bo5$8bo$10bo$9bo2$10bo
   """,
   """
   --Rotating line
@@ -33,34 +46,23 @@ window.defaultLibrary = [
   b2o2$b2o2$b2o2$b2o2$b2o2$b2o2$3bo$2bo
   """,
   """
-  --12-celler
+  --12-cell spaceship
   at -20 0
   2b4o$4b2o$bo2bo$2bo$bo2bobo
   """,
   """
-  --Period 12k
-  at -10 -10
-  6bo2$b3o2$3b3o
+  --11-cell spaceship
+  at -20 -2; b3o$2bo$3bo$bo$2obo$2o
   """,
   """
-  --Fast 11-celler
-  at -20 -2
-  b3o$2bo$3bo$bo$2obo$2o
+  --Period 12k spaceship
+  at -10 -10; 6bo2$b3o2$3b3o
   """,
   """
   --Wall collision
-  at -30 -10
-  $4b2o10b2o2$4b2o10b2o4$2o8b2o2$2o8b2o
-  at 0 -10
-  colors #00e
-  $2o$2o$2o$2o$2o$2o$2o$2o$2o$2o
-  """,
-  """
-  --Light SS vs wall
-  at -20 -20
-  bo2$b2obo
-  at -26 -16
-  colors #00f
+  at -30 -6; $4b2o10b2o2$4b2o10b2o4$2o8b2o2$2o8b2o
+  at 0 -4
+  colors #aaa
   $2o$2o$2o$2o$2o$2o$2o$2o$2o$2o
   """,
   """
@@ -70,16 +72,6 @@ window.defaultLibrary = [
   at -10 -10
   colors #aaa
   b20o$22o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$2o18b2o$22o$b20o
-  """,
-  """
-  --Lightest spaceships
-  at -26 -16
-  $2o2$2o3$38bo$2o36bo$bo8bobo9bo6b3o$2bo6b2o9bobo6bo8bo$20bo17bo
-  """,
-  """
-  --Fastest orthogonal
-  at -26 -18
-  2bo38bo$2bo12bo5bo3bo8bo8bo5bobo$bo12bo6bo2bo10bo7bo5bobo$11bo11b2o6b2o2bo$b3o8bo11b2o9bo6bo$15bo7bo17b3o$11b2obo$43bo
   """
 ]
 
