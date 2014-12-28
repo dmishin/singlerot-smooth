@@ -193,9 +193,10 @@ class SimulatorApp
     catch e
       alert "Failed to parse: #{e}"
     @isim.clear()
-    @isim.put parsed.pattern, cx, cy
-    @colors = parsed.colors
-    @isim.simulator.rule = parsed.rule if parsed.rule?
+    if parsed.pattern.length > 0
+      @isim.put parsed.pattern, cx, cy
+      @colors = parsed.colors
+    @isim.simulator.rule = parsed.rule ? makeRule "1,2,4,8:rot90"
     @_updateClearBtnIcon()
     @_clearBackground()
     window.scrollTo 0, 0
