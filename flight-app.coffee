@@ -57,6 +57,7 @@ parseFieldDescriptionlLanguage = (fdlText, defaultPalette) ->
     comment: /^\s*--\s*(.*)$/
     empty: /^\s*$/
     size: /^\s*size\s+(\d+)\s+(\d+)\s*$/
+    rule: /^\s*rule\s+(.+)\s*$/
 
   pos = [0,0]
   pattern = []
@@ -65,6 +66,7 @@ parseFieldDescriptionlLanguage = (fdlText, defaultPalette) ->
   curColors = defaultPalette
   size = null
   descriptions = []
+  rule = null
   for line in fdlText.split "\n"
    for instruction in line.split ";"
     instruction = instruction.trim()
@@ -86,9 +88,17 @@ parseFieldDescriptionlLanguage = (fdlText, defaultPalette) ->
       null
     else if m = instruction.match(FLD.comment)
       descriptions.push m[1]
+    else if m = instruction.match(FLD.rule)
+      rule = makeRule m[1].split('|').join(';')
     else
       throw new Error "Unexpected instruction: #{instruction}"
-  return [pattern, colors, size, descriptions.join("\n")]    
+  return {
+    pattern: pattern
+    colors: colors
+    size: size
+    name: descriptions.join("\n")
+    rule: rule
+  }
 
 #taken from http://www.html5canvastutorials.com/advanced/html5-canvas-mouse-coordinates/
 getCanvasCursorPosition = (e, canvas) ->
@@ -178,13 +188,14 @@ class SimulatorApp
     cx = (@isim.simulator.width/2) & ~1
     cy = (@isim.simulator.height/2) & ~1
     try
-      [pp, cc] = parseFieldDescriptionlLanguage fdl, @colorPalette
+      parsed = parseFieldDescriptionlLanguage fdl, @colorPalette
       document.getElementById("fld-text").value = fdl
     catch e
       alert "Failed to parse: #{e}"
     @isim.clear()
-    @isim.put pp, cx, cy
-    @colors = cc
+    @isim.put parsed.pattern, cx, cy
+    @colors = parsed.colors
+    @isim.simulator.rule = parsed.rule if parsed.rule?
     @_updateClearBtnIcon()
     @_clearBackground()
     window.scrollTo 0, 0
@@ -346,7 +357,7 @@ class Library
     @iconSize = [64, 56]
 
   addFdl: (fdl, palette)->
-    [pattern, colors, sz, description] = parseFieldDescriptionlLanguage fdl, palette
+    {pattern, colors, name} = parseFieldDescriptionlLanguage fdl, palette
     liItem = document.createElement "li"
     liItem.setAttribute "data-fdl", fdl
     liAnchor = document.createElement "a"
@@ -362,7 +373,7 @@ class Library
     canvasContainer.appendChild itemImage
     liAnchor.appendChild canvasContainer
     
-    descText = document.createTextNode description
+    descText = document.createTextNode name
     liAnchor.appendChild descText
     @drawPatternOn pattern, colors, itemImage
     
