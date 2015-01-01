@@ -55,7 +55,7 @@ class FlowingLine
 class FlyingCurves
   constructor: ->
 
-    pattern = parseRle "$3b2o$2bobob2o$2bo5bo$7b2o$b2o$bo5bo$2b2obobo$5b2o"
+    pattern = parseRle "$3b2o$2bobob2o$2bo5bo$7b2o$b2o$bo5bo$2b2obobo$5b2oo"
     simulator = new Simulator 32, 32 #field size
     simulator.put pattern, 12, 12 #pattern roughly at the center
     
@@ -66,14 +66,14 @@ class FlyingCurves
 
     #Create geometry
     @segments = 1000
-    @scale = 10
+    @scale = 30
     state = @isim.getInterpolatedState()
-    z0 = -200
-    z1 = 200
+    z0 = -400
+    z1 = 400
     @group = new THREE.Object3D
     @lines = for i in [0...state.length] by 2
       line = new FlowingLine @segments
-      line.initial state[i]*@scale, state[i+1]*@scale, z0, z1
+      line.initial (state[i]-16)*@scale, (state[i+1]-16)*@scale, z0, z1
       @group.add line.mesh
       line
     console.log "Created #{@lines.length} lines"
@@ -82,7 +82,7 @@ class FlyingCurves
     state = @isim.getInterpolatedState()
     for line, i in @lines
       i2 = i*2
-      line.flow state[i2]*@scale, state[i2+1]*@scale
+      line.flow (state[i2]-16)*@scale, (state[i2+1]-16)*@scale
       #if i is 0
       #  console.log "Point 0: #{state[i2]}, #{state[i2+1]}"
     return
@@ -132,7 +132,8 @@ animate = ->
   requestAnimationFrame animate
   render()
   stats.update()
-  curves.step()
+  for i in [1..20]
+    curves.step()
   geometryTime += 0.001
   return
   
