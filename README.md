@@ -4,6 +4,8 @@ singlerot-smooth
 
 ![Sample picture](./images/singlerot-smooth.png)
 
+[See it live](http://dmishin.github.io/singlerot-smooth/singlerot-smooth.html)
+
 [Single Rotation](http://dmishin.blogspot.ru/2013/11/the-single-rotation-rule-remarkably.html)
 is a very simple yet rich reversible cellular automaton.
 Unlike the famous [Game of Life](http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life), it preserves total number of alive cells.
