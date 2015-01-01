@@ -52,14 +52,16 @@ newFloatArray = if Float32Array?
   else
     (sz) -> fillZeros new Array sz
 
+exports.Rules = Rules =
+  singleRotation: {1: Transforms.rot90, 2: Transforms.rot90, 4:Transforms.rot90, 8:Transforms.rot90}  
+
 exports.Simulator = class Simulator
-  constructor: (@width, @height, rule)->
+  constructor: (@width, @height, @rule = Rules.singleRotation)->
     @cells = []
     #values are indices of cells array + 1
     @field = newInt8Array @width*@height
     @field1 = newInt8Array @width*@height
     @phase = 0
-    @rule = rule ? {1: Transforms.rot90, 2: Transforms.rot90, 4:Transforms.rot90, 8:Transforms.rot90}
     
   cellCount: -> (@cells.length/2) | 0
 

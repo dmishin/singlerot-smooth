@@ -1,5 +1,9 @@
 all: flight.js default_library.js
 
+
+rle.js: rle.coffee
+	coffee -c rle.coffee
+
 revca_track.js: revca_track.coffee
 	coffee -c revca_track.coffee
 
@@ -9,7 +13,7 @@ flight-app.js: flight-app.coffee
 default_library.js: default_library.coffee
 	coffee -c default_library.coffee
 
-flight.js: flight-app.js revca_track.js
+flight.js: flight-app.js revca_track.js rle.js
 	browserify flight-app.js -o flight.js
 
 flight.min.js: flight.js

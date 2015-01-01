@@ -1,4 +1,5 @@
 {Simulator, CircularInterpolatingSimulator} = require "../revca_track"
+{parseRle} = require "../rle"
 
 container = undefined
 stats = undefined
@@ -35,7 +36,6 @@ class FlowingLine
       ps[i3] = x
       ps[i3+1] = y
       ps[i3+2] = z
-      console.log "Add line point #{x} #{y} #{z}"
       cs[i3]=1
       cs[i3+1]=1
       cs[i3+2]=1
@@ -51,7 +51,44 @@ class FlowingLine
     ps[i3]   =x
     ps[i3+1] =y
     @setDirty()
+
+class FlyingCurves
+  constructor: ->
+
+    pattern = parseRle "$3b2o$2bobob2o$2bo5bo$7b2o$b2o$bo5bo$2b2obobo$5b2o"
+    simulator = new Simulator 32, 32 #field size
+    simulator.put pattern, 12, 12 #pattern roughly at the center
     
+    order = 3
+    interpSteps = 4
+    smoothing = 1
+    @isim = new CircularInterpolatingSimulator simulator, order, interpSteps, smoothing
+
+    #Create geometry
+    @segments = 1000
+    @scale = 10
+    state = @isim.getInterpolatedState()
+    z0 = -200
+    z1 = 200
+    @group = new THREE.Object3D
+    @lines = for i in [0...state.length] by 2
+      line = new FlowingLine @segments
+      line.initial state[i]*@scale, state[i+1]*@scale, z0, z1
+      @group.add line.mesh
+      line
+    console.log "Created #{@lines.length} lines"
+  step: ->
+    @isim.nextTime 1
+    state = @isim.getInterpolatedState()
+    for line, i in @lines
+      i2 = i*2
+      line.flow state[i2]*@scale, state[i2+1]*@scale
+      #if i is 0
+      #  console.log "Point 0: #{state[i2]}, #{state[i2+1]}"
+    return
+      
+curves = undefined    
+          
 init = ->
   container = document.getElementById("container")
   
@@ -60,15 +97,10 @@ init = ->
   camera.position.z = 2750
   scene = new THREE.Scene()
 
-  
-  line = new FlowingLine 100 #segments
-  line.initial 0, 0, -200, 200
 
-  lines.push line
-
-  mesh = new THREE.Object3D
-  mesh.add line.mesh
-
+  curves = new FlyingCurves
+    
+  mesh = curves.group
   scene.add mesh
   
   #
@@ -100,9 +132,7 @@ animate = ->
   requestAnimationFrame animate
   render()
   stats.update()
-  for line in lines
-    #updateGeometry line, geometryTime, true
-    line.flow Math.random()*200+100, Math.random()*200+100
+  curves.step()
   geometryTime += 0.001
   return
   
