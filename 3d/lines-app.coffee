@@ -9,8 +9,10 @@ renderer = undefined
 mesh = undefined
 lines = []
 
+palette = [0xfe8f0f, 0xf7325e, 0x7dc410, 0xfef8cf, 0x0264ed]
+
 class FlowingLine
-  constructor: (@segments) ->
+  constructor: (@segments, color) ->
     @geometry = new THREE.BufferGeometry()
     @geometry.dynamic = true
     @material = new THREE.LineBasicMaterial({vertexColors: THREE.VertexColors, linewidth:3})
@@ -21,6 +23,11 @@ class FlowingLine
     @geometry.addAttribute "color", new THREE.BufferAttribute(@colors, 3)
     #@geometry.computeBoundingSphere()
     @mesh = new THREE.Line(@geometry, @material)
+
+    r = color & 0xff
+    g = (color >> 8) & 0xff
+    b = (color >> 16) & 0xff
+    @color = [r/255.0,g/255.0,b/255.0]
     
   setDirty: ->
     @geometry.attributes[ "position" ].needsUpdate = true
@@ -30,15 +37,16 @@ class FlowingLine
   initial: (x, y, z0, z1) ->
     ps = @positions
     cs = @colors
+    [r,g,b] = @color
     for i in [0...@segments] by 1
       i3=i*3
       z = z0 + ((z1-z0)/(@segments-1))*i
       ps[i3] = x
       ps[i3+1] = y
       ps[i3+2] = z
-      cs[i3]=1
-      cs[i3+1]=1
-      cs[i3+2]=1
+      cs[i3]=r
+      cs[i3+1]=g
+      cs[i3+2]=b
     @setDirty()
       
   flow: (x, y) ->
@@ -48,6 +56,10 @@ class FlowingLine
       ps[i3] = ps[i3+3]
       ps[i3+1] = ps[i3+4]
     i3 = (@segments-1)*3
+    delta = Math.abs(ps[i3]-x) + Math.abs(ps[i3+1]-y)
+    if delta > 10
+      ps[i3-3]=NaN
+      ps[i3-2]=NaN
     ps[i3]   =x
     ps[i3+1] =y
     @setDirty()
@@ -61,7 +73,7 @@ class FlyingCurves
     
     order = 3
     interpSteps = 4
-    smoothing = 1
+    smoothing = 4
     @isim = new CircularInterpolatingSimulator simulator, order, interpSteps, smoothing
 
     #Create geometry
@@ -72,7 +84,7 @@ class FlyingCurves
     z1 = 400
     @group = new THREE.Object3D
     @lines = for i in [0...state.length] by 2
-      line = new FlowingLine @segments
+      line = new FlowingLine @segments, palette[ (i/2) % palette.length ]
       line.initial (state[i]-16)*@scale, (state[i+1]-16)*@scale, z0, z1
       @group.add line.mesh
       line
@@ -138,7 +150,7 @@ animate = ->
   return
   
 render = ->
-  time = Date.now() * 0.001
+  time = Date.now() * 0.0001
   mesh.rotation.x = time * 0.25
   mesh.rotation.y = time * 0.5
   renderer.render scene, camera
