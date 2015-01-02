@@ -82,11 +82,12 @@ class FlyingCurves
 
     #Create geometry
     @segments = 500
-    scale = 30
+    @scale = scale = 30
     state = @isim.getInterpolatedState()
     z0 = -1400/scale
     z1 = 400/scale
-    
+
+    @stepZ = (z0 - z1)/(@segments-1)
     @group = new THREE.Object3D
 
     @lines = for i in [0...state.length] by 2
@@ -99,12 +100,16 @@ class FlyingCurves
     @group.position.set -0.5*simulator.width*scale, -0.5*simulator.height*scale, 0
     @group.updateMatrix()
     console.log "Created #{@lines.length} lines"
-  step: ->
-    @isim.nextTime 1
-    state = @isim.getInterpolatedState()
-    for line, i in @lines
-      i2 = i*2
-      line.flow state[i2], state[i2+1]
+  #offset all curves by Z axis. Amount is fraction in steps.
+  offsetZ: (amount) ->
+    @group.position.setZ amount*@stepZ*@scale
+  step: (steps) ->
+    for i in [0...steps] by 1
+      @isim.nextTime 1
+      state = @isim.getInterpolatedState()
+      for line, i in @lines
+        i2 = i*2
+        line.flow state[i2], state[i2+1]
     return
       
 curves = undefined    
@@ -163,13 +168,27 @@ onWindowResize = ->
   controls.handleResize()
   return
 
+
+prevTime = null
+stepsLeft = 0
+stepsPerMs = 10 / 1000
+
 animate = ->
   requestAnimationFrame animate
   render()
   controls.update()
   stats.update()
-  for i in [1..5]
-    curves.step()
+
+  time = Date.now()
+  if prevTime isnt null
+    dt = time-prevTime
+    steps = stepsLeft + stepsPerMs * dt
+    iSteps = Math.round steps
+    stepsLeft = steps - iSteps
+    curves.step iSteps
+    #to make movement smoother, shift lines by the remaining noninteger fraction.
+    curves.offsetZ stepsLeft
+  prevTime = time
   return
   
 render = ->
