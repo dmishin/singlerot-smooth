@@ -7,7 +7,7 @@ camera = undefined
 scene = undefined
 renderer = undefined
 mesh = undefined
-lines = []
+controls = undefined
 
 palette = [0xfe8f0f, 0xf7325e, 0x7dc410, 0xfef8cf, 0x0264ed]
 
@@ -57,7 +57,7 @@ class FlowingLine
       ps[i3+1] = ps[i3+4]
     i3 = (@segments-1)*3
     delta = Math.abs(ps[i3]-x) + Math.abs(ps[i3+1]-y)
-    if delta > 10
+    if delta > 100
       ps[i3-3]=NaN
       ps[i3-2]=NaN
     ps[i3]   =x
@@ -72,15 +72,15 @@ class FlyingCurves
     simulator.put pattern, 12, 12 #pattern roughly at the center
     
     order = 3
-    interpSteps = 4
-    smoothing = 4
+    interpSteps = 3
+    smoothing = 12
     @isim = new CircularInterpolatingSimulator simulator, order, interpSteps, smoothing
 
     #Create geometry
-    @segments = 1000
+    @segments = 500
     @scale = 30
     state = @isim.getInterpolatedState()
-    z0 = -400
+    z0 = -1400
     z1 = 400
     @group = new THREE.Object3D
     @lines = for i in [0...state.length] by 2
@@ -109,6 +109,21 @@ init = ->
   camera.position.z = 2750
   scene = new THREE.Scene()
 
+  controls = new THREE.TrackballControls  camera
+
+  controls.rotateSpeed = 1.0
+  controls.zoomSpeed = 1.2
+  controls.panSpeed = 0.8
+
+  controls.noZoom = false
+  controls.noPan = false
+
+  controls.staticMoving = true
+  controls.dynamicDampingFactor = 0.3
+
+  controls.keys = [ 65, 83, 68 ]
+
+  #controls.addEventListener 'change', render
 
   curves = new FlyingCurves
     
@@ -136,23 +151,22 @@ onWindowResize = ->
   camera.aspect = window.innerWidth / window.innerHeight
   camera.updateProjectionMatrix()
   renderer.setSize window.innerWidth, window.innerHeight
+  controls.handleResize()
   return
-
-geometryTime = 0
 
 animate = ->
   requestAnimationFrame animate
   render()
+  controls.update()
   stats.update()
-  for i in [1..20]
+  for i in [1..5]
     curves.step()
-  geometryTime += 0.001
   return
   
 render = ->
-  time = Date.now() * 0.0001
-  mesh.rotation.x = time * 0.25
-  mesh.rotation.y = time * 0.5
+  #time = Date.now() * 0.0001
+  #mesh.rotation.x = time * 0.25
+  #mesh.rotation.y = time * 0.5
   renderer.render scene, camera
   return
   
