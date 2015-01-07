@@ -111,7 +111,105 @@ class FlyingCurves
         i2 = i*2
         line.flow state[i2], state[i2+1]
     return
+
+class ChunkedFlyingCurves
+  constructor: ->
+    pattern = parseRle "$3b2o$2bobob2o$2bo5bo$7b2o$b2o$bo5bo$2b2obobo$5b2oo"
+    simulator = new Simulator 64, 64 #field size
+    patW = Math.max( (xy[0] for xy in pattern) ... )
+    patH = Math.max( (xy[1] for xy in pattern) ... )
+    #Offset to put pattern to the center
+    cx = ((simulator.width - patW)/2) & ~1
+    cy = ((simulator.height - patH)/2) & ~1
+    console.log "Putting pattern at #{cx}, #{cy}"
+    simulator.put pattern, cx, cy #pattern roughly at the center
+    
+    order = 3
+    interpSteps = 1
+    smoothing = 4
+    @tubeRadius = 0.1
+    @isim = new CircularInterpolatingSimulator simulator, order, interpSteps, smoothing
+
+    @stepZ = 1 / interpSteps
+
+    @chunkSize = 100
+    @stepZ = 0.1
+    @scale = scale = 30
+    @nCells = pattern.length
+    @colors = (palette[i%palette.length] for i in [0...@nCells] by 1)
+    @group = new THREE.Object3D
+    @chunks = []
+    @materials = for color in @colors
+      new THREE.MeshBasicMaterial color: color
+
+    @zMin = -100
+    @lastChunkZ = 0
+
+    @group.scale.set scale, scale, scale
+    @group.position.set -0.5*simulator.width*scale, -0.5*simulator.height*scale, 0
+    @group.updateMatrix()
+        
+  makeChunk: ->
+    states = for i in [0...@chunkSize] by 1
+      @isim.nextTime 1
+      @isim.getInterpolatedState()
+    #create lines
+    chunk = new THREE.Object3D
+    for i in [0...@nCells]
+      tubeGeom = @createTube states, i*2
+      tube = new THREE.Mesh tubeGeom, @materials[i]
+      chunk.add tube
+    return chunk
       
+  createTube: (xys, i)->
+    tube = new THREE.Geometry
+    vs = tube.vertices
+    fs = tube.faces
+    pushQuad = (i1,i2, i3, i4) ->
+      fs.push new THREE.Face3 i1, i2, i3
+      fs.push new THREE.Face3 i2, i4, i3
+      return
+      
+    r = @tubeRadius
+    for xy, iz in xys
+      z = iz*@stepZ
+      x=xy[i]
+      y=xy[i+1]
+      vindex = vs.length
+      vs.push new THREE.Vector3 x-r,y,z
+      vs.push new THREE.Vector3 x,y+r,z
+      vs.push new THREE.Vector3 x+r,y,z
+      vs.push new THREE.Vector3 x,y-r,z
+      if iz >0
+        for j in [0...4]
+          j1 = (j+1)%4
+          pushQuad vindex-4+j, vindex+j, vindex-4+j1, vindex+j1
+    return  tube
+    
+  step: (dz) ->
+    i = 0
+    while i < @chunks.length
+      chunk = @chunks[i]
+      chunk.position.setZ chunk.position.z-dz
+      if chunk.position.z < @zMin
+        console.log "Discarding chunk #{i}"
+        @chunks.splice i, 1
+      else
+        i += 1
+    @lastChunkZ -= dz
+    if @lastChunkZ < 0
+      console.log "last chunk is at #{@lastChunkZ}, Cerating new chunk..."
+      chunk = @makeChunk()
+      chunkLen = @chunkSize * @stepZ
+      @lastChunkZ += chunkLen
+      chunk.position.setZ @lastChunkZ
+      @chunks.push chunk
+      @group.add chunk
+      console.log "Created, addded at #{@lastChunkZ} chunk of len #{chunkLen}"
+    return
+      
+      
+
 curves = undefined    
           
 init = ->
@@ -138,7 +236,7 @@ init = ->
 
   #controls.addEventListener 'change', render
 
-  curves = new FlyingCurves
+  curves = new ChunkedFlyingCurves
 
   lines = new THREE.Object3D
   lines.add curves.group
@@ -171,7 +269,7 @@ onWindowResize = ->
 
 prevTime = null
 stepsLeft = 0
-stepsPerMs = 10 / 1000
+stepsPerMs = 5 / 1000
 
 animate = ->
   requestAnimationFrame animate
@@ -182,12 +280,14 @@ animate = ->
   time = Date.now()
   if prevTime isnt null
     dt = time-prevTime
-    steps = stepsLeft + stepsPerMs * dt
-    iSteps = Math.round steps
-    stepsLeft = steps - iSteps
-    curves.step iSteps
+    #steps = stepsLeft + stepsPerMs * dt
+    #iSteps = Math.round steps
+    #stepsLeft = steps - iSteps
+    #curves.step Math.min 100, iSteps #for old line-based code
+    curves.step stepsPerMs * dt
+    
     #to make movement smoother, shift lines by the remaining noninteger fraction.
-    curves.offsetZ stepsLeft
+    #curves.offsetZ stepsLeft
   prevTime = time
   return
   
