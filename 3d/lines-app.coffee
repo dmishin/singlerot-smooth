@@ -24,14 +24,14 @@ class ChunkedFlyingCurves
     simulator.put pattern, cx, cy #pattern roughly at the center
     
     order = 3
-    interpSteps = 1
+    interpSteps = 2
     smoothing = 4
     @tubeRadius = 0.1
     @isim = new CircularInterpolatingSimulator simulator, order, interpSteps, smoothing
 
     @stepZ = 1 / interpSteps
 
-    @chunkSize = 100
+    @chunkSize = 200
     @stepZ = 0.1
     @scale = scale = 30
     @nCells = pattern.length
@@ -49,19 +49,22 @@ class ChunkedFlyingCurves
     @group.updateMatrix()
         
   makeChunk: ->
+    unless @lastState
+      @lastState = @isim.getInterpolatedState()
     states = for i in [0...@chunkSize] by 1
       @isim.nextTime 1
       @isim.getInterpolatedState()
     #create lines
     chunk = new THREE.Object3D
     for i in [0...@nCells]
-      tubeGeom = @createTube states, i*2
+      tubeGeom = @createTube states, i*2, @lastState
       tube = new THREE.Mesh tubeGeom, @materials[i]
       chunk.add tube
+    @lastState = states[states.length-1]
     return chunk
 
 
-  createTube: (xys, i)->
+  createTube: (xys, i, xy0)->
     vs = new Float32Array xys.length*4*3 #x,y,z; 4 vertices
     ixs =  new Uint16Array (xys.length-1)*2*3*4 #2 triangles
     curIx = 0
@@ -84,16 +87,50 @@ class ChunkedFlyingCurves
       return
       
     r = @tubeRadius
+
+    x0 = xy0[i]
+    y0 = xy0[i]
     for xy, iz in xys
       z = iz*@stepZ
       x=xy[i]
       y=xy[i+1]
+
+      #vectr from the previous point to this
+      dx = x-x0
+      dy = y-y0
+      dz = @stepZ
+      x0 = x
+      y0 = y
+
+      #compute normals
+      # noraml of form
+      # xn1, 0, zn1
+      # xn1 dx + zn1 dz = 0
+      # xn1 dx = - zn1 dz
+      # zn1 = - (dx/dz) xn1
+      # #
+      # xn1^2 ( 1 + (dx/dz)^2 ) = 1
+      # xn1^2 = 1/( 1 + (dx/dz)^2 )
+      # xn1^2 = dz^2 / (dx^2+dz^2)
+      # 
+      # xn1 =   dz / sqrt(dx^2+dz^2)
+      # zn1 = - dx / sqrt(dx^2+dz^2)
+
+      qdxdz = r / Math.sqrt( dx*dx+dz*dz)
+      xn1 = dz * qdxdz
+      zn1 = -dx * qdxdz
+      
+      qdydz = r / Math.sqrt( dy*dy+dz*dz)
+      yn2 = dz * qdydz
+      zn2 = -dy * qdydz
+      
+            
       vindex = curV / 3 | 0
 
-      pushXYZ x-r,y,z
-      pushXYZ x,y+r,z
-      pushXYZ x+r,y,z
-      pushXYZ x,y-r,z
+      pushXYZ x-xn1,y,z-zn1
+      pushXYZ x,y+yn2,z+zn2
+      pushXYZ x+xn1,y,z+zn1
+      pushXYZ x,y-yn2,z-zn2
       if iz >0
         for j in [0...4]
           j1 = (j+1)%4
@@ -107,35 +144,9 @@ class ChunkedFlyingCurves
     tube.addAttribute 'position', new THREE.BufferAttribute(vs, 3)
     tube.addAttribute 'index', new THREE.BufferAttribute(ixs, 1)
 
-  
     #tube.offsets.push {start: 0;index: 0; count: vs.length}
 
     tube.computeBoundingSphere()
-    return  tube
-    
-  createTube1: (xys, i)->
-    tube = new THREE.Geometry
-    vs = tube.vertices
-    fs = tube.faces
-    pushQuad = (i1,i2, i3, i4) ->
-      fs.push new THREE.Face3 i1, i2, i3
-      fs.push new THREE.Face3 i2, i4, i3
-      return
-      
-    r = @tubeRadius
-    for xy, iz in xys
-      z = iz*@stepZ
-      x=xy[i]
-      y=xy[i+1]
-      vindex = vs.length
-      vs.push new THREE.Vector3 x-r,y,z
-      vs.push new THREE.Vector3 x,y+r,z
-      vs.push new THREE.Vector3 x+r,y,z
-      vs.push new THREE.Vector3 x,y-r,z
-      if iz >0
-        for j in [0...4]
-          j1 = (j+1)%4
-          pushQuad vindex-4+j, vindex+j, vindex-4+j1, vindex+j1
     return  tube
     
   step: (dz) ->
@@ -169,11 +180,11 @@ init = ->
   container = document.getElementById("container")
   
   #
-  camera = new THREE.PerspectiveCamera(27, window.innerWidth / window.innerHeight, 1, 4000)
+  camera = new THREE.PerspectiveCamera(27, window.innerWidth / window.innerHeight, 1, 10500)
   camera.position.z = 2750
   scene = new THREE.Scene()
-  #scene.fog = new THREE.Fog 0x050505, 2000, 3500
-  scene.add new THREE.AmbientLight 0x444444 
+  scene.fog = new THREE.Fog 0x050505, 2000, 10500
+  #scene.add new THREE.AmbientLight 0x444444 
 
   controls = new THREE.TrackballControls  camera
 
