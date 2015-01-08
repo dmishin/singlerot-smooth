@@ -24,7 +24,7 @@ class ChunkedFlyingCurves
     simulator.put pattern, cx, cy #pattern roughly at the center
     
     order = 3
-    interpSteps = 2
+    interpSteps = 1
     smoothing = 4
     @tubeRadius = 0.1
     @isim = new CircularInterpolatingSimulator simulator, order, interpSteps, smoothing
@@ -43,10 +43,12 @@ class ChunkedFlyingCurves
 
     @zMin = -100
     @lastChunkZ = 0
+    @jumpTreshold = 3
 
     @group.scale.set scale, scale, scale
     @group.position.set -0.5*simulator.width*scale, -0.5*simulator.height*scale, 0
     @group.updateMatrix()
+    
         
   makeChunk: ->
     unless @lastState
@@ -65,6 +67,7 @@ class ChunkedFlyingCurves
 
 
   createTube: (xys, i, xy0)->
+    jumpTreshold = @jumpTreshold
     vs = new Float32Array xys.length*4*3 #x,y,z; 4 vertices
     ixs =  new Uint16Array (xys.length-1)*2*3*4 #2 triangles
     curIx = 0
@@ -131,12 +134,15 @@ class ChunkedFlyingCurves
       pushXYZ x,y+yn2,z+zn2
       pushXYZ x+xn1,y,z+zn1
       pushXYZ x,y-yn2,z-zn2
-      if iz >0
+      if iz >0 and Math.abs(dx)+Math.abs(dy) < jumpTreshold
         for j in [0...4]
           j1 = (j+1)%4
           pushQuad vindex-4+j, vindex+j, vindex-4+j1, vindex+j1
 
-    if curIx isnt ixs.length then throw new Error "Not all indices filled"
+    if curIx isnt ixs.length
+      #then throw new Error "Not all indices filled"
+      console.log "Indices skip: #{ixs.length - curIx}"
+      ixs = ixs.subarray 0, curIx
     if curV isnt vs.length then throw new Error "Not all vertices filled"
 
     tube = new THREE.BufferGeometry()
@@ -235,7 +241,7 @@ onWindowResize = ->
 
 prevTime = null
 stepsLeft = 0
-stepsPerMs = 5 / 1000
+stepsPerMs = 15 / 1000
 
 animate = ->
   requestAnimationFrame animate
