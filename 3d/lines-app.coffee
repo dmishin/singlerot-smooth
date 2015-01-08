@@ -10,8 +10,10 @@ controls = undefined
 
 palette = [0xfe8f0f, 0xf7325e, 0x7dc410, 0xfef8cf, 0x0264ed]
 
-
-class ChunkedFlyingCurves
+###Pure class, without THREE.js code.
+#  Creates "blueprints" of the tube geometries
+###
+class Tubing
   constructor: ->
     pattern = parseRle "$3b2o$2bobob2o$2bo5bo$7b2o$b2o$bo5bo$2b2obobo$5b2oo"
     simulator = new Simulator 64, 64 #field size
@@ -20,7 +22,7 @@ class ChunkedFlyingCurves
     #Offset to put pattern to the center
     cx = ((simulator.width - patW)/2) & ~1
     cy = ((simulator.height - patH)/2) & ~1
-    console.log "Putting pattern at #{cx}, #{cy}"
+
     simulator.put pattern, cx, cy #pattern roughly at the center
     
     order = 3
@@ -29,43 +31,24 @@ class ChunkedFlyingCurves
     @tubeRadius = 0.1
     @isim = new CircularInterpolatingSimulator simulator, order, interpSteps, smoothing
 
-    @stepZ = 1 / interpSteps
-
     @chunkSize = 200
     @stepZ = 0.1
-    @scale = scale = 30
     @nCells = pattern.length
-    @colors = (palette[i%palette.length] for i in [0...@nCells] by 1)
-    @group = new THREE.Object3D
-    @chunks = []
-    @materials = for color in @colors
-      new THREE.MeshBasicMaterial color: color
-
-    @zMin = -100
-    @lastChunkZ = 0
     @jumpTreshold = 3
+    @lastState = null
 
-    @group.scale.set scale, scale, scale
-    @group.position.set -0.5*simulator.width*scale, -0.5*simulator.height*scale, 0
-    @group.updateMatrix()
-    
-        
-  makeChunk: ->
+  makeChunkBlueprint: ->
     unless @lastState
       @lastState = @isim.getInterpolatedState()
     states = for i in [0...@chunkSize] by 1
       @isim.nextTime 1
       @isim.getInterpolatedState()
     #create lines
-    chunk = new THREE.Object3D
-    for i in [0...@nCells]
-      tubeGeom = @createTube states, i*2, @lastState
-      tube = new THREE.Mesh tubeGeom, @materials[i]
-      chunk.add tube
+    tubes = for i in [0...@nCells]
+      @makeTubeBlueprint states, i*2, @lastState
     @lastState = states[states.length-1]
-    return chunk
-
-
+    return tubes
+  chunkLen: -> @chunkSize * @stepZ
   makeTubeBlueprint: (xys, i, xy0)->
     jumpTreshold = @jumpTreshold
     vs = new Float32Array xys.length*4*3 #x,y,z; 4 vertices
@@ -148,8 +131,42 @@ class ChunkedFlyingCurves
       idx_used: curIx
     return blueprint
     
-  createTube: (xys, i, xy0)->
-    blueprint = @makeTubeBlueprint xys, i, xy0
+  
+
+class ChunkedFlyingCurves
+  constructor: ->
+    @tubing = tubing = new Tubing
+    
+    @scale = scale = 30
+
+    @colors = (palette[i%palette.length] for i in [0...tubing.nCells] by 1)
+    @group = new THREE.Object3D
+    @chunks = []
+    @materials = for color in @colors
+      new THREE.MeshBasicMaterial color: color
+
+    @zMin = -100
+    @lastChunkZ = 0
+
+    @group.scale.set scale, scale, scale
+    simulator = @tubing.isim.simulator
+    @group.position.set -0.5*simulator.width*scale, -0.5*simulator.height*scale, 0
+    @group.updateMatrix()
+    
+        
+  makeChunk: ->
+    blueprint = @tubing.makeChunkBlueprint()
+
+    #create lines
+    chunk = new THREE.Object3D
+    for tubeBp, i in blueprint
+      tubeGeom = @createTube tubeBp
+      tube = new THREE.Mesh tubeGeom, @materials[i]
+      chunk.add tube
+    return chunk
+
+
+  createTube: (blueprint)->
     tube = new THREE.BufferGeometry()
 
     vs = blueprint.v.subarray 0, blueprint.v_used
@@ -157,9 +174,6 @@ class ChunkedFlyingCurves
     
     tube.addAttribute 'position', new THREE.BufferAttribute(vs, 3)
     tube.addAttribute 'index', new THREE.BufferAttribute(ixs, 1)
-
-    #tube.offsets.push {start: 0;index: 0; count: vs.length}
-
     tube.computeBoundingSphere()
     return  tube
     
@@ -178,12 +192,12 @@ class ChunkedFlyingCurves
     if @lastChunkZ < 0
       console.log "last chunk is at #{@lastChunkZ}, Cerating new chunk..."
       chunk = @makeChunk()
-      chunkLen = @chunkSize * @stepZ
+      chunkLen = @tubing.chunkLen()
       @lastChunkZ += chunkLen
       chunk.position.setZ @lastChunkZ
       @chunks.push chunk
       @group.add chunk
-      console.log "Created, addded at #{@lastChunkZ} chunk of len #{chunkLen}"
+      console.log "Created, added at #{@lastChunkZ} chunk of len #{chunkLen}"
     return
       
       
