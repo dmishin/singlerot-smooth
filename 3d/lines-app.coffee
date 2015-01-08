@@ -72,12 +72,22 @@ class WorkerFlyingCurves
     unless chunk?
       throw new Error "Received chukn with task id #{taskId}, but it is not registered!"
     delete @taskId2dummyChunks[taskId]
-    
-    for tubeBp, i in blueprint
-      tubeGeom = @createTube tubeBp
-      tube = new THREE.Mesh tubeGeom, @materials[i]
-      chunk.add tube
-    console.log "Received chunk!"
+    i = 0
+
+    tubesPerPart = 1
+    processingDelay = 20
+    processPart = =>
+      for j in [0...Math.min(blueprint.length-1-i, tubesPerPart)] by 1
+        tubeBp = blueprint[i]
+        tubeGeom = @createTube tubeBp
+        tube = new THREE.Mesh tubeGeom, @materials[i]
+        chunk.add tube
+        i+=1
+      if i < blueprint.length-1
+        setTimeout processPart, processingDelay
+        
+    processPart()
+    #console.log "Received chunk!"
     return
     
   createTube: (blueprint)->
@@ -108,14 +118,14 @@ class WorkerFlyingCurves
         
     @lastChunkZ -= dz
     if @lastChunkZ < 0
-      console.log "last chunk is at #{@lastChunkZ}, Requesting new chunk..."
+      #console.log "last chunk is at #{@lastChunkZ}, Requesting new chunk..."
       #Posts request to the worker and quickly returns dummy
       [chunk, taskId] = @requestChunk()
       @lastChunkZ += @chunkLen
       chunk.position.setZ @lastChunkZ
       @chunks.push chunk
       @group.add chunk
-      console.log "Requested #{taskId}, added dummy at #{@lastChunkZ} chunk of len #{@chunkLen}"
+      #console.log "Requested #{taskId}, added dummy at #{@lastChunkZ} chunk of len #{@chunkLen}"
     return
         
 
@@ -168,21 +178,21 @@ class ChunkedFlyingCurves
       chunk = @chunks[i]
       chunk.position.setZ chunk.position.z-dz
       if chunk.position.z < @zMin
-        console.log "Discarding chunk #{i}"
+        #console.log "Discarding chunk #{i}"
         @chunks.splice i, 1
         @group.remove chunk
       else
         i += 1
     @lastChunkZ -= dz
     if @lastChunkZ < 0
-      console.log "last chunk is at #{@lastChunkZ}, Cerating new chunk..."
+      #console.log "last chunk is at #{@lastChunkZ}, Cerating new chunk..."
       chunk = @makeChunk()
       chunkLen = @tubing.chunkLen()
       @lastChunkZ += chunkLen
       chunk.position.setZ @lastChunkZ
       @chunks.push chunk
       @group.add chunk
-      console.log "Created, added at #{@lastChunkZ} chunk of len #{chunkLen}"
+      #console.log "Created, added at #{@lastChunkZ} chunk of len #{chunkLen}"
     return
 
 
