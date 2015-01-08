@@ -66,7 +66,7 @@ class ChunkedFlyingCurves
     return chunk
 
 
-  createTube: (xys, i, xy0)->
+  makeTubeBlueprint: (xys, i, xy0)->
     jumpTreshold = @jumpTreshold
     vs = new Float32Array xys.length*4*3 #x,y,z; 4 vertices
     ixs =  new Uint16Array (xys.length-1)*2*3*4 #2 triangles
@@ -139,13 +139,21 @@ class ChunkedFlyingCurves
           j1 = (j+1)%4
           pushQuad vindex-4+j, vindex+j, vindex-4+j1, vindex+j1
 
-    if curIx isnt ixs.length
-      #then throw new Error "Not all indices filled"
-      console.log "Indices skip: #{ixs.length - curIx}"
-      ixs = ixs.subarray 0, curIx
     if curV isnt vs.length then throw new Error "Not all vertices filled"
 
+    blueprint =
+      v: vs
+      v_used: curV
+      idx: ixs
+      idx_used: curIx
+    return blueprint
+    
+  createTube: (xys, i, xy0)->
+    blueprint = @makeTubeBlueprint xys, i, xy0
     tube = new THREE.BufferGeometry()
+
+    vs = blueprint.v.subarray 0, blueprint.v_used
+    ixs = blueprint.idx.subarray 0, blueprint.idx_used
     
     tube.addAttribute 'position', new THREE.BufferAttribute(vs, 3)
     tube.addAttribute 'index', new THREE.BufferAttribute(ixs, 1)
