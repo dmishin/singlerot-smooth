@@ -9,7 +9,7 @@ lines-app.js: lines-app.coffee
 tubing_worker.js: tubing_worker.coffee
 	coffee -c tubing_worker.coffee
 
-tubing_worker_browser.js: tubing_worker.js
+tubing_worker_browser.js: tubing_worker.js tubing.js
 	browserify -o tubing_worker_browser.js tubing_worker.js
 
 lines.treejs.js: lines-app.js tubing.js tubing_worker_browser.js

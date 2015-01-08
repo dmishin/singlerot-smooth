@@ -21,7 +21,7 @@ exports.Tubing = class Tubing
     @tubeRadius = 0.1
     @isim = new CircularInterpolatingSimulator simulator, order, interpSteps, smoothing
 
-    @chunkSize = 200
+    @chunkSize = 1000
     @stepZ = 0.1
     @nCells = pattern.length
     @jumpTreshold = 3

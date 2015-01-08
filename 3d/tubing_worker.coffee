@@ -14,10 +14,16 @@ initialize = ->
 
 generateChunk = (taskId)->
   bp = tubing.makeChunkBlueprint()
-  self.postMessage
+  transferables=[]
+  for tubeBp in bp
+    transferables.push tubeBp.v.buffer
+    transferables.push tubeBp.idx.buffer
+    
+  self.postMessage {
     cmd: "chunk"
     taskId: taskId
     blueprint: bp
+    }, transferables
   
 #worker message handler
 self.addEventListener "message", (e)->
