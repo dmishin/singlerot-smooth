@@ -20,7 +20,8 @@ class WorkerFlyingCurves
     @scale = scale = 30
     @group = new THREE.Object3D
     @chunks = []
-    @zMin = -100
+    @zMin = -4000 / scale
+    @zMax = 4000 / scale
     @lastChunkZ = 0
 
     @group.scale.set scale, scale, scale
@@ -74,7 +75,7 @@ class WorkerFlyingCurves
     delete @taskId2dummyChunks[taskId]
     i = 0
 
-    tubesPerPart = 1
+    tubesPerPart = 5
     processingDelay = 20
     processPart = =>
       for j in [0...Math.min(blueprint.length-1-i, tubesPerPart)] by 1
@@ -103,8 +104,9 @@ class WorkerFlyingCurves
 
   step: (dz) ->
     unless @ready
-      console.log "orker not ready yet..."
+      #console.log "Worker not ready yet..."
       return
+      
     i = 0
     while i < @chunks.length
       chunk = @chunks[i]
@@ -117,7 +119,7 @@ class WorkerFlyingCurves
         i += 1
         
     @lastChunkZ -= dz
-    if @lastChunkZ < 0
+    if @lastChunkZ < @zMax
       #console.log "last chunk is at #{@lastChunkZ}, Requesting new chunk..."
       #Posts request to the worker and quickly returns dummy
       [chunk, taskId] = @requestChunk()
@@ -129,71 +131,71 @@ class WorkerFlyingCurves
     return
         
 
-class ChunkedFlyingCurves
-  constructor: ->
-    @tubing = tubing = new Tubing
+# class ChunkedFlyingCurves
+#   constructor: ->
+#     @tubing = tubing = new Tubing
     
-    @scale = scale = 30
+#     @scale = scale = 30
 
-    @colors = (palette[i%palette.length] for i in [0...tubing.nCells] by 1)
-    @group = new THREE.Object3D
-    @chunks = []
-    @materials = for color in @colors
-      new THREE.MeshBasicMaterial color: color
+#     @colors = (palette[i%palette.length] for i in [0...tubing.nCells] by 1)
+#     @group = new THREE.Object3D
+#     @chunks = []
+#     @materials = for color in @colors
+#       new THREE.MeshBasicMaterial color: color
 
-    @zMin = -100
-    @lastChunkZ = 0
+#     @zMin = -100
+#     @lastChunkZ = 0
 
-    @group.scale.set scale, scale, scale
-    simulator = @tubing.isim.simulator
-    @group.position.set -0.5*simulator.width*scale, -0.5*simulator.height*scale, 0
-    @group.updateMatrix()    
+#     @group.scale.set scale, scale, scale
+#     simulator = @tubing.isim.simulator
+#     @group.position.set -0.5*simulator.width*scale, -0.5*simulator.height*scale, 0
+#     @group.updateMatrix()    
         
-  makeChunk: ->
-    blueprint = @tubing.makeChunkBlueprint()
+#   makeChunk: ->
+#     blueprint = @tubing.makeChunkBlueprint()
 
-    #create lines
-    chunk = new THREE.Object3D
-    for tubeBp, i in blueprint
-      tubeGeom = @createTube tubeBp
-      tube = new THREE.Mesh tubeGeom, @materials[i]
-      chunk.add tube
-    return chunk
+#     #create lines
+#     chunk = new THREE.Object3D
+#     for tubeBp, i in blueprint
+#       tubeGeom = @createTube tubeBp
+#       tube = new THREE.Mesh tubeGeom, @materials[i]
+#       chunk.add tube
+#     return chunk
 
 
-  createTube: (blueprint)->
-    tube = new THREE.BufferGeometry()
+#   createTube: (blueprint)->
+#     tube = new THREE.BufferGeometry()
 
-    vs = blueprint.v.subarray 0, blueprint.v_used
-    ixs = blueprint.idx.subarray 0, blueprint.idx_used
+#     vs = blueprint.v.subarray 0, blueprint.v_used
+#     ixs = blueprint.idx.subarray 0, blueprint.idx_used
     
-    tube.addAttribute 'position', new THREE.BufferAttribute(vs, 3)
-    tube.addAttribute 'index', new THREE.BufferAttribute(ixs, 1)
-    tube.computeBoundingSphere()
-    return  tube
+#     tube.addAttribute 'position', new THREE.BufferAttribute(vs, 3)
+#     tube.addAttribute 'index', new THREE.BufferAttribute(ixs, 1)
+#     tube.computeBoundingSphere()
+#     return  tube
     
-  step: (dz) ->
-    i = 0
-    while i < @chunks.length
-      chunk = @chunks[i]
-      chunk.position.setZ chunk.position.z-dz
-      if chunk.position.z < @zMin
-        #console.log "Discarding chunk #{i}"
-        @chunks.splice i, 1
-        @group.remove chunk
-      else
-        i += 1
-    @lastChunkZ -= dz
-    if @lastChunkZ < 0
-      #console.log "last chunk is at #{@lastChunkZ}, Cerating new chunk..."
-      chunk = @makeChunk()
-      chunkLen = @tubing.chunkLen()
-      @lastChunkZ += chunkLen
-      chunk.position.setZ @lastChunkZ
-      @chunks.push chunk
-      @group.add chunk
-      #console.log "Created, added at #{@lastChunkZ} chunk of len #{chunkLen}"
-    return
+#   step: (dz) ->
+#     i = 0
+#     while i < @chunks.length
+#       chunk = @chunks[i]
+#       chunk.position.setZ chunk.position.z-dz
+#       if chunk.position.z < @zMin
+#         #console.log "Discarding chunk #{i}"
+#         @chunks.splice i, 1
+#         @group.remove chunk
+#       else
+#         i += 1
+#     @lastChunkZ -= dz
+#     if @lastChunkZ < 0
+#       #console.log "last chunk is at #{@lastChunkZ}, Cerating new chunk..."
+#       chunk = @makeChunk()
+#       chunkLen = @tubing.chunkLen()
+#       @lastChunkZ += chunkLen
+#       chunk.position.setZ @lastChunkZ
+#       @chunks.push chunk
+#       @group.add chunk
+#       #console.log "Created, added at #{@lastChunkZ} chunk of len #{chunkLen}"
+#     return
 
 
       
@@ -205,7 +207,7 @@ init = ->
   
   #
   camera = new THREE.PerspectiveCamera(27, window.innerWidth / window.innerHeight, 1, 10500)
-  camera.position.z = 2750
+  camera.position.set 500, 0, -1750
   scene = new THREE.Scene()
   scene.fog = new THREE.Fog 0x050505, 2000, 10500
   #scene.add new THREE.AmbientLight 0x444444 
@@ -260,7 +262,7 @@ onWindowResize = ->
 
 prevTime = null
 stepsLeft = 0
-stepsPerMs = 15 / 1000
+stepsPerMs = 100 / 1000
 
 animate = ->
   requestAnimationFrame animate
@@ -275,7 +277,7 @@ animate = ->
     #iSteps = Math.round steps
     #stepsLeft = steps - iSteps
     #curves.step Math.min 100, iSteps #for old line-based code
-    curves.step stepsPerMs * dt
+    curves.step Math.min 100, stepsPerMs * dt
     
     #to make movement smoother, shift lines by the remaining noninteger fraction.
     #curves.offsetZ stepsLeft

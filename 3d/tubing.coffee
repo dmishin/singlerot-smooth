@@ -21,7 +21,7 @@ exports.Tubing = class Tubing
     @tubeRadius = 0.1
     @isim = new CircularInterpolatingSimulator simulator, order, interpSteps, smoothing
 
-    @chunkSize = 100
+    @chunkSize = 300
     @stepZ = 0.1
     @nCells = pattern.length
     @jumpTreshold = 3
@@ -138,7 +138,7 @@ exports.Tubing = class Tubing
       pushXYZ x-xn2,y-yn2,z-zn2
       
       
-      if iz > 1 and Math.abs(dx)+Math.abs(dy) < jumpTreshold
+      if iz > 1 and (Math.abs(xys[iz-1][i] - x)+Math.abs(xys[iz-1][i+1] - y) < jumpTreshold)
         for j in [0...4]
           j1 = (j+1)%4
           pushQuad vindex-4+j, vindex+j, vindex-4+j1, vindex+j1
