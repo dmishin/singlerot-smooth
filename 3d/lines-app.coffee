@@ -30,10 +30,13 @@ class WorkerFlyingCurves
     #continue initialization after the worker is ready
     pattern = parseRle "$3b2o$2bobob2o$2bo5bo$7b2o$b2o$bo5bo$2b2obobo$5b2obo"
     #pattern = parseRle "26bo$24bobo$25bo3$25bo$20bo3bobo$18bobo5bo$19bo3$19bo$14bo3bobo$12bobo5bo$13bo3$13bo$8bo3bobo$6bobo5bo$7bo3$7bo$2bo3bobo$obo5bo$bo"
+    #pattern = parseRle "6bo2$b3o2$3b3o"
     @worker.postMessage
       cmd: "init"
       pattern: pattern
       chunkSize: 500
+      skipSteps: 1
+      size: 128
       # _finishInitialize invoked on responce
     
   _finishInitialize: (nCells, fldWidth, fldHeight, chunkLen)->
@@ -99,12 +102,17 @@ class WorkerFlyingCurves
   createTube: (blueprint)->
     tube = new THREE.BufferGeometry()
 
-    vs = blueprint.v.subarray 0, blueprint.v_used
-    ixs = blueprint.idx.subarray 0, blueprint.idx_used
+    vs = blueprint.v
+    if blueprint.v_used isnt vs.length
+      vs = vs.subarray 0, blueprint.v_used
+      
+    ixs = blueprint.idx
+    if blueprint.idx_used isnt ixs.length
+      ixs = ixs.subarray 0, blueprint.idx_used
     
     tube.addAttribute 'position', new THREE.BufferAttribute(vs, 3)
     tube.addAttribute 'index', new THREE.BufferAttribute(ixs, 1)
-    tube.computeBoundingSphere()
+    #tube.computeBoundingSphere() #do we need it?
     return  tube
 
   step: (dz) ->
