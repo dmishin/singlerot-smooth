@@ -163,10 +163,12 @@ exports.Tubing = class Tubing
 
     if curV isnt vs.length then throw new Error "Not all vertices filled"
 
-    blueprint =
+    if curIx isnt ixs.length
+      ixs = ixs.subarray 0, curIx
+
+    #Bluepring
+    return{
       v: vs
-      v_used: curV
       idx: ixs
-      idx_used: curIx
-    return blueprint
+    }
     

@@ -8,6 +8,8 @@ renderer = undefined
 controls = undefined
 stepsPerMs = 10 / 1000
 
+showStats = false
+
 palette = [0xfe8f0f, 0xf7325e, 0x7dc410, 0xfef8cf, 0x0264ed]
 
 class WorkerFlyingCurves
@@ -30,7 +32,7 @@ class WorkerFlyingCurves
     #continue initialization after the worker is ready
     pattern = parseRle "$3b2o$2bobob2o$2bo5bo$7b2o$b2o$bo5bo$2b2obobo$5b2obo"
     #pattern = parseRle "26bo$24bobo$25bo3$25bo$20bo3bobo$18bobo5bo$19bo3$19bo$14bo3bobo$12bobo5bo$13bo3$13bo$8bo3bobo$6bobo5bo$7bo3$7bo$2bo3bobo$obo5bo$bo"
-    #pattern = parseRle "6bo2$b3o2$3b3o"
+    #pattern = parseRle "b2o2$b2o2$b2o2$b2o2$b2o2$b2o2$3bo$2bo"
     @worker.postMessage
       cmd: "init"
       pattern: pattern
@@ -78,8 +80,8 @@ class WorkerFlyingCurves
     
   _receiveChunk: (blueprint, taskId)->
     chunk = @taskId2dummyChunks[taskId]
-    unless chunk?
-      throw new Error "Received chukn with task id #{taskId}, but it is not registered!"
+    #discard unexpected chunks
+    return unless chunk?    
     delete @taskId2dummyChunks[taskId]
     i = 0
 
@@ -103,18 +105,18 @@ class WorkerFlyingCurves
     tube = new THREE.BufferGeometry()
 
     vs = blueprint.v
-    if blueprint.v_used isnt vs.length
-      vs = vs.subarray 0, blueprint.v_used
-      
     ixs = blueprint.idx
-    if blueprint.idx_used isnt ixs.length
-      ixs = ixs.subarray 0, blueprint.idx_used
-    
     tube.addAttribute 'position', new THREE.BufferAttribute(vs, 3)
     tube.addAttribute 'index', new THREE.BufferAttribute(ixs, 1)
     #tube.computeBoundingSphere() #do we need it?
     return  tube
 
+  loadPattern: (rle) ->
+    pattern = parseRle rle
+    @worker.postMessage
+      cmd:"load"
+      pattern: pattern
+    
   step: (dz) ->
     unless @ready
       #console.log "Worker not ready yet..."
@@ -187,10 +189,11 @@ init = ->
   container.appendChild renderer.domElement
   
   #
-  stats = new Stats()
-  stats.domElement.style.position = "absolute"
-  stats.domElement.style.top = "0px"
-  container.appendChild stats.domElement
+  if showStats
+    stats = new Stats()
+    stats.domElement.style.position = "absolute"
+    stats.domElement.style.top = "0px"
+    container.appendChild stats.domElement
   
   #
   window.addEventListener "resize", onWindowResize, false
@@ -210,7 +213,7 @@ animate = ->
   requestAnimationFrame animate
   render()
   controls.update()
-  stats.update()
+  stats?.update()
 
   time = Date.now()
   if prevTime isnt null
