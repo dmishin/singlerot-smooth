@@ -28,11 +28,13 @@ class WorkerFlyingCurves
     @taskId2dummyChunks = {}
     @nextTaskId = 0
     #continue initialization after the worker is ready
-    pattern = parseRle "$3b2o$2bobob2o$2bo5bo$7b2o$b2o$bo5bo$2b2obobo$5b2o"
+    pattern = parseRle "$3b2o$2bobob2o$2bo5bo$7b2o$b2o$bo5bo$2b2obobo$5b2obo"
+    #pattern = parseRle "26bo$24bobo$25bo3$25bo$20bo3bobo$18bobo5bo$19bo3$19bo$14bo3bobo$12bobo5bo$13bo3$13bo$8bo3bobo$6bobo5bo$7bo3$7bo$2bo3bobo$obo5bo$bo"
     @worker.postMessage
       cmd: "init"
       pattern: pattern
-    # _finishInitialize invoked on responce
+      chunkSize: 500
+      # _finishInitialize invoked on responce
     
   _finishInitialize: (nCells, fldWidth, fldHeight, chunkLen)->
     @colors = (palette[i%palette.length] for i in [0...nCells] by 1)
@@ -78,8 +80,8 @@ class WorkerFlyingCurves
     delete @taskId2dummyChunks[taskId]
     i = 0
 
-    tubesPerPart = 50
-    processingDelay = 20
+    tubesPerPart = 1
+    processingDelay = 100
     processPart = =>
       for j in [0...Math.min(blueprint.length-1-i, tubesPerPart)] by 1
         tubeBp = blueprint[i]
@@ -204,8 +206,8 @@ animate = ->
 
   time = Date.now()
   if prevTime isnt null
-    dt = time-prevTime
-    curves.step Math.min 100, stepsPerMs * dt    
+    dt = Math.min(time-prevTime, 100) #if FPS fals below 10, slow down simulation instead.
+    curves.step stepsPerMs * dt
   prevTime = time
   return
   

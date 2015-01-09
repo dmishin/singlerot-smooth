@@ -6,7 +6,7 @@ tubing = undefined
 initialize = (options)->
   unless options.pattern?
     throw new Error "Pattern not specified!"
-  tubing = new Tubing options.pattern
+  tubing = new Tubing options.pattern, options
   self.postMessage
     cmd: "init"
     nCells: tubing.nCells

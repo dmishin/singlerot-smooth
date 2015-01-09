@@ -3,8 +3,9 @@
 #  Creates "blueprints" of the tube geometries
 ###
 exports.Tubing = class Tubing
-  constructor: (pattern)->
-    simulator = new Simulator 64, 64 #field size
+  constructor: (pattern, options)->
+    size = options.size ? 64
+    simulator = new Simulator size, size #field size
     patW = Math.max( (xy[0] for xy in pattern) ... )
     patH = Math.max( (xy[1] for xy in pattern) ... )
     #Offset to put pattern to the center
@@ -13,13 +14,13 @@ exports.Tubing = class Tubing
 
     simulator.put pattern, cx, cy #pattern roughly at the center
     
-    order = 3
-    interpSteps = 1
-    smoothing = 4
+    order = options.lanczosOrder ? 3
+    interpSteps = options.interpSteps ? 1
+    smoothing = options.smoothingPeriod ? 4
     @tubeRadius = 0.1
     @isim = new CircularInterpolatingSimulator simulator, order, interpSteps, smoothing
 
-    @chunkSize = 300
+    @chunkSize = options.chunkSize ? 500
     @stepZ = 0.1
     @nCells = pattern.length
     @jumpTreshold = 3
