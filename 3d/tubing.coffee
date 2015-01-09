@@ -1,11 +1,9 @@
 {Simulator, CircularInterpolatingSimulator} = require "../revca_track"
-{parseRle} = require "../rle"
 ###Pure class, without THREE.js code.
 #  Creates "blueprints" of the tube geometries
 ###
 exports.Tubing = class Tubing
-  constructor: ->
-    pattern = parseRle "$3b2o$2bobob2o$2bo5bo$7b2o$b2o$bo5bo$2b2obobo$5b2oo"
+  constructor: (pattern)->
     simulator = new Simulator 64, 64 #field size
     patW = Math.max( (xy[0] for xy in pattern) ... )
     patH = Math.max( (xy[1] for xy in pattern) ... )

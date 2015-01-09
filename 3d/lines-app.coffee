@@ -28,7 +28,11 @@ class WorkerFlyingCurves
     @taskId2dummyChunks = {}
     @nextTaskId = 0
     #continue initialization after the worker is ready
-    @worker.postMessage cmd: "init" # _finishInitialize
+    pattern = parseRle "$3b2o$2bobob2o$2bo5bo$7b2o$b2o$bo5bo$2b2obobo$5b2o"
+    @worker.postMessage
+      cmd: "init"
+      pattern: pattern
+    # _finishInitialize invoked on responce
     
   _finishInitialize: (nCells, fldWidth, fldHeight, chunkLen)->
     @colors = (palette[i%palette.length] for i in [0...nCells] by 1)

@@ -3,8 +3,10 @@
 tubing = undefined
 
 
-initialize = ->
-  tubing = new Tubing
+initialize = (options)->
+  unless options.pattern?
+    throw new Error "Pattern not specified!"
+  tubing = new Tubing options.pattern
   self.postMessage
     cmd: "init"
     nCells: tubing.nCells
@@ -27,14 +29,13 @@ generateChunk = (taskId)->
   
 #worker message handler
 self.addEventListener "message", (e)->
-  data = e.data
   cmd = e.data.cmd
   unless cmd?
     throw new Error "Unknown message received! #{JSON.stringify e.data}"
 
   switch cmd
     when "init"
-      initialize()
+      initialize e.data
     when "chunk"
       generateChunk e.data.taskId
     else
