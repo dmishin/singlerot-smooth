@@ -127,23 +127,23 @@ exports.Tubing = class Tubing
       xyPrev = xys[iz-1]
       xyNext = xys[iz+1]
       
-      z = (iz-1)*dz
+      z = (iz-1)*@stepZ
       x=xy[tubeIndex]
       y=xy[tubeIndex+1]
 
       #(dx,dy,dz) is an approximate tangent
       dx = xyNext[tubeIndex] - xyPrev[tubeIndex]
       dy = xyNext[tubeIndex+1] - xyPrev[tubeIndex+1] #y-y0
-      #dz = @stepZ
-      iqxyz2 = 1.0 / ( dx*dx+dy*dy+dz*dz)
-      iqxyz = 1.0 / Math.sqrt( iqxyz2 ) #normalizing K
-
-      #x0 = x
-      #y0 = y
+      dz = @stepZ
+      
+      iqxyz = 1.0 / Math.sqrt( dx*dx+dy*dy+dz*dz ) #normalizing K
+      dx *=  iqxyz
+      dy *=  iqxyz
+      dz *=  iqxyz
 
       #main normal is calculated by projecting the last normal 
       # pn X tangent:
-      tan = (x_pn*dx + y_pn*dy + z_pn*dz) * iqxyz2 #tangent component, scaled by iqxyz
+      tan = x_pn*dx + y_pn*dy + z_pn*dz #tangent component, scaled by iqxyz
       xn1 = x_pn - tan * dx
       yn1 = y_pn - tan * dy
       zn1 = z_pn - tan * dz
@@ -154,43 +154,33 @@ exports.Tubing = class Tubing
         yn1 *= inorm1
         zn1 *= inorm1
       else
-        xn1=1.0
-        yn1=0.0
-        zn1=0.0
+        qxz = 1.0/Math.sqrt( dx*dx+dy*dz)
+        xn1= -dz * qxz
+        yn1 = 0.0
+        zn1 = dx * qxz
       
 
-      #compute normals
-      # noraml of form
-      # xn1, yn1, 0
-      # xn1 dx + yn1 dx = 0
-      # 
-      # xn1 =   dx / sqrt(dx^2+dy^2)
-      # yn1 = - dy / sqrt(dx^2+dy^2)
-
-      #qxy = Math.sqrt( dx*dx+dy*dy)
-      #zn1 = 0
-      #if qxy < 1e-3
-      #  xn1 = 1.0
-      #  yn1 = 0.0
-      #else
-      #  iqxy = 1 / qxy
-      #  xn1 = dy * iqxy
-      #  yn1 = -dx * iqxy
       #now calculate the third vector, as a X-product of
       # (xn1, yn1, zn1) X (dx, dy, dz)
       # -dz*yn1*i +dz*xn1*j+ k*(dx*yn1-dy*xn1)
-      xn2 = (dy*zn1-dz*yn1) * iqxyz
-      yn2 = (dz*xn1-dx*zn1) * iqxyz
-      zn2 = (dx*yn1-dy*xn1) * iqxyz
+      xn2 = dy*zn1-dz*yn1
+      yn2 = dz*xn1-dx*zn1
+      zn2 = dx*yn1-dy*xn1
+
+      #if Math.abs(xn2**2+yn2**2+zn2**2 - 1) > 1e-3
+      #  throw new Error "Big difference N2"
+      #if Math.abs(xn1**2+yn1**2+zn1**2 - 1) > 1e-3
+      #  throw new Error "Big difference N1"
 
       vindex = curV / 3 | 0
             
       #and push shape of the tube section
       shape = @tubeShape
+    
       for i in [0 ... shape.length] by 2
         vx = shape[i]
         vy = shape[i+1]
-        pushXYZ x+xn1*vx+xn2*vy, y+yn1*vx+yn2*vy, z+zn2*vy+zn1*vx
+        pushXYZ x+xn1*vx+xn2*vy, y+yn1*vx+yn2*vy, z+zn1*vx+zn2*vy
 
       x_pn = xn1
       y_pn = yn1

@@ -25,7 +25,8 @@ class WorkerFlyingCurves
   constructor: (startZ=4000, endZ=-4000) ->
     @worker = new Worker "./tubing_worker_app.js"
     @worker.addEventListener "message", (e)=>@_onMsg(e)
-
+    @worker.addEventListener "error", (e)->
+      console.log JSON.stringify e
     
     @scale = scale = 30
     @group = new THREE.Object3D
