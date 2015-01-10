@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Single Rotation 3d</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="styles.css"/>
+  </head>
+  <body>
+
+    <div class="toolbar">
+      <div class="toolbar-row">
+	<div class="top-left-toolbar">
+	  <button id="btn-show-patterns" class="transparent-image-button" title="Menu">
+	    <img src="../images/ic_menu_24px.svg" style="width:3em;height:3em">
+	  </button>
+	</div>
+	
+	
+	<div class="top-toolbar">
+	  <button id="btn-speed-0" class="transparent-image-button" title="Stop">
+	    <img src="../images/ic_pause_24px.svg" style="width:3em;height:3em">
+	  </button>
+	  <button id="btn-speed-1" class="transparent-image-button" title="Slow">
+	    <img src="../images/v_arrow_24px.svg" style="width:3em;height:3em">
+	  </button>
+	  <button id="btn-speed-2" class="transparent-image-button" title="Faster">
+	    <img src="../images/v2_arrow_24px.svg" style="width:3em;height:3em">
+	  </button>
+	  <button id="btn-speed-3" class="transparent-image-button" title="Fast">
+	    <img src="../images/v3_arrow_24px.svg" style="width:3em;height:3em">
+	  </button>
+	  <button id="btn-speed-4" class="transparent-image-button" title="Very fast">
+	    <img src="../images/v4_arrow_24px.svg" style="width:3em;height:3em">
+	  </button>
+	</div>
+
+	<div class="top-right-toolbar">
+	  <a href="../help.html" target="_blank" class="transparent-image-link" title="What's this?">
+	    <img src="../images/ic_help_24px.svg" style="width:3em;height:3em">
+	  </a>
+	</div>
+      </div>
+    </div>
+    <div id="container"></div>
+    
+    <div id="patterns-window" style="display:none" class="popup-window">
+      <div>
+	<p>
+	Load predefined pattern:
+	<br/>
+	<select id="select-pattern"><option value=""></option></select>
+	</p>
+	<p>
+	Or enter RLE of the custom pattern. For options for coloring cells and combining patterns, see <a target="_blank" href="../help.html#language">language description here</a>. See also the <a target="_blank" href="http://dmishin.github.io/singlerot-spaceships/singlerot-spaceships.html">library of the Single Rotation spaceships</a> for additional patterns to try.
+	<br/>
+	<textarea id="custom-rle"></textarea>
+	<br/>
+	<button id="btn-load-custom">Load</button>
+	</p>
+	<div id="toolbar-close">
+	  <button id="btn-close-patterns" class="transparent-image-button" title="Close">
+	    <img src="../images/ic_clear_24px.svg" style="width:3em;height:3em">
+	  </button>
+	</div>
+      </div>
+	
+    </div>
+    
+    <script src="../default_library.js"></script>
+    <script src="./threejs/three.min.js"></script>
+    <script src="./threejs/Detector.js"></script>
+    <script src="./threejs/TrackballControls.js"></script>
+    <!--Uncomment stats to see FPS -->
+    <!--<script src="./threejs/stats.min.js"></script>-->    
+    <script src="singlerot3d-app.js"></script>
+
+  </body>
+</html>

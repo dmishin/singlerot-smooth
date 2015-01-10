@@ -20,4 +20,15 @@ clean:
 	rm tubing.js singlerot3d.js tubing_worker.js  tubing_worker_app.js singlerot3d-app.js
 
 
-.PHONY: clean
+pre-publish: singlerot3d-app.js tubing_worker_app.js
+	mkdir -p ../dmishin.github.io/singlerot-smooth/3d && \
+	cp -r singlerot-3d.html singlerot3d-app.js tubing_worker_app.js styles.css threejs ../dmishin.github.io/singlerot-smooth/3d/
+
+publish: pre-publish
+	cd ../dmishin.github.io/singlerot-smooth && \
+	git add -A && \
+	git commit -m "Publish automatically" && \
+	git push 
+
+
+.PHONY: clean publish
