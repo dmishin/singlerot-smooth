@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <title>Single Rotation 3d</title>
@@ -8,45 +8,60 @@
   </head>
   <body>
 
-    <div class="top-toolbar">
-      <button id="btn-speed-0" class="transparent-image-button" title="Stop">
-	<img src="../images/ic_pause_24px.svg" style="width:3em;height:3em">
-      </button>
-      <button id="btn-speed-1" class="transparent-image-button" title="Slow">
-	<img src="../images/v_arrow_24px.svg" style="width:3em;height:3em">
-      </button>
-      <button id="btn-speed-2" class="transparent-image-button" title="Faster">
-	<img src="../images/v2_arrow_24px.svg" style="width:3em;height:3em">
-      </button>
-      <button id="btn-speed-3" class="transparent-image-button" title="Fast">
-	<img src="../images/v3_arrow_24px.svg" style="width:3em;height:3em">
-      </button>
-      <button id="btn-speed-4" class="transparent-image-button" title="Very fast">
-	<img src="../images/v4_arrow_24px.svg" style="width:3em;height:3em">
-      </button>
-    </div>
+    <div class="toolbar">
+    <div class="toolbar-row">
+      <div class="top-left-toolbar">
+	<button id="btn-show-patterns" class="transparent-image-button" title="Menu">
+	  <img src="../images/ic_menu_24px.svg" style="width:3em;height:3em">
+	</button>
+      </div>
+      
+      
+      <div class="top-toolbar">
+	<button id="btn-speed-0" class="transparent-image-button" title="Stop">
+	  <img src="../images/ic_pause_24px.svg" style="width:3em;height:3em">
+	</button>
+	<button id="btn-speed-1" class="transparent-image-button" title="Slow">
+	  <img src="../images/v_arrow_24px.svg" style="width:3em;height:3em">
+	</button>
+	<button id="btn-speed-2" class="transparent-image-button" title="Faster">
+	  <img src="../images/v2_arrow_24px.svg" style="width:3em;height:3em">
+	</button>
+	<button id="btn-speed-3" class="transparent-image-button" title="Fast">
+	  <img src="../images/v3_arrow_24px.svg" style="width:3em;height:3em">
+	</button>
+	<button id="btn-speed-4" class="transparent-image-button" title="Very fast">
+	  <img src="../images/v4_arrow_24px.svg" style="width:3em;height:3em">
+	</button>
+      </div>
 
-    
-    <div class="top-right-toolbar">
-      <button id="btn-show-patterns" class="transparent-image-button" title="Menu">
-	<img src="../images/ic_menu_24px.svg" style="width:3em;height:3em">
-      </button>
-      <a href="help.html" target="_blank" class="transparent-image-link" title="What's this?">
-	<img src="../images/ic_help_24px.svg" style="width:3em;height:3em">
-      </a>
+      <div class="top-right-toolbar">
+	<a href="help.html" target="_blank" class="transparent-image-link" title="What's this?">
+	  <img src="../images/ic_help_24px.svg" style="width:3em;height:3em">
+	</a>
+      </div>
     </div>
-      
-    <div id="patterns-window" style="display:none">
-      
     </div>
-    
     <div id="container"></div>
+      
+      <div id="patterns-window" style="display:none">
+	<div>
+	  <h1>Settings</h1>
+	  <h2>Pattern library</h2>
+	  
+	  <h2>Custom pattern</h2>
+	  <textarea id="rle-entry">
+	  </textarea>
+	  <br/>
+	  <button id="btn-close-settings">OK</button>
+	</div>
+      </div>
     
-
     <script src="./threejs/three.min.js"></script>
     <script src="./threejs/Detector.js"></script>
     <script src="./threejs/TrackballControls.js"></script>
     <script src="./threejs/stats.min.js"></script>
     <script src="lines.treejs.js"></script>
+
   </body>
 </html>

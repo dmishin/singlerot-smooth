@@ -12,62 +12,36 @@ select {
 /* ******************************
 *  Main window layout 
 */
+body, html{
+  margin:0;
+  padding:0;
+}
 body{
     color: #fff;
     background-color: #222;
-    margin: 0;
-    padding: 0;
-}
-#controls{
-    display: none;
-    background-color: rgba(255,255,255,0.1);
-    width: 100%;
-    overflow: hidden;
 }
 
-.top-right-toolbar{
+.toolbar {
+    display: table;
+    width:100%;
     position: absolute;
-    right:0;
 }
-
-.top-toolbar{
-    position: absolute;
-    left:0;
-    right:0;
-    margin-left:auto;
-    margin-right:auto;
-}
-#clear-box{
-    position: absolute;
-    top: 0;
-    right: 0;
-}
-#main-screen{
-    margin: 0;
-    text-align: center;
-    background-color: #000;
-}
-.controls-row{
+.toolbar-row{
     display: table-row;
 }
-.controls-cell{
-    display: table-cell;
-}
-.label{
-    text-align:right;
+.toolbar-row div {
+    display:table-cell;
 }
 
-.grow-menu {
-    height: 2em; /* Origional height */
-    transition:height 0.5s; /* Animation time */
-    -webkit-transition:height 0.5s; /* For Safari */
-    overflow: hidden;
+.top-left-toolbar{
+    text-align: left;
 }
-.grow-menu:hover {
-    height: 8em; /* This is the height on hover */
-    background-color: rgba(255,255,255,0.2);
+.top-toolbar{
+    text-align: center;
 }
-
+.top-right-toolbar{
+    text-align: right;
+}
 
 a.transparent-image-link{
     background: transparent;
@@ -128,11 +102,7 @@ ul.library > li:hover{
     text-align: center;
 }
 
-/*** Custon scene ****/
-#scene-editor div{
-    padding-left: 2em;
-}
-#scene-editor textarea{
+textarea{
     width: 80%;
     height: 8em;
     border: 0px solid #0264ed;
