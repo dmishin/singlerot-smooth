@@ -239,6 +239,7 @@ bindEvents = ->
   E("btn-speed-1").addEventListener "click", setSpeed 10
   E("btn-speed-2").addEventListener "click", setSpeed 30
   E("btn-speed-3").addEventListener "click", setSpeed 100
+  E("btn-speed-4").addEventListener "click", setSpeed 300
 
   E("btn-show-patterns").addEventListener "click", showPatternsWindow
 
