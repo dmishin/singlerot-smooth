@@ -1,5 +1,9 @@
 
 window.defaultLibrary = [
+  """--Ping Pong spaceships
+  at 0 0; $15bo2$13bo$11b2o$11bo10$o2$3bo
+  at -12 -12; $9bo2$7bo$5b2o$5bo4$o2$3bo
+  """,  
   """--Galaxy
   at -4 -4; 
   $3b2o$2bobob2o$2bo5bo$7b2o$b2o$bo5bo$2b2obobo$5b2o

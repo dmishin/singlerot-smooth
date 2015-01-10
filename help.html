@@ -12,13 +12,13 @@
       <img src="images/singlerot-smooth.png">
     </figure>
     <p>It's a simulator of
-    the <a href="http://dmishin.blogspot.com/2013/11/the-single-rotation-rule-remarkably.html">Single
-    Rotation</a> cellular automaton, that tracks positions of the
-    cells and uses Lanczos interpolation to add an intermediate
-    frames. Its primary purpose is a nice visual effect, for
-    experimenting with reversible cellular automata
-    see <a href="http://dmishin.github.io/js-revca/index.html?rule=0,2,8,3,1,5,6,7,4,9,10,11,12,13,14,15&step=8&frame_delay=100&size=64x64&cell_size=6,1&phase=0">online
-    simulator</a>.
+      the <a href="http://dmishin.blogspot.com/2013/11/the-single-rotation-rule-remarkably.html">Single
+	Rotation</a> cellular automaton, that tracks positions of the
+      cells and uses Lanczos interpolation to add an intermediate
+      frames. Its primary purpose is a nice visual effect, for
+      experimenting with reversible cellular automata
+      see <a href="http://dmishin.github.io/js-revca/index.html?rule=0,2,8,3,1,5,6,7,4,9,10,11,12,13,14,15&step=8&frame_delay=100&size=64x64&cell_size=6,1&phase=0">online
+	simulator</a>.
     </p>
 
     <h2>Single Rotation rule</h2>
@@ -41,36 +41,35 @@
     <p>One can easily check that in the "Single Rotation" rule a single cell would constantly rotate with period 4. To make this less annoying, a possibility to filter higher frequencies of the cell movement is added. For example, when "filter" setting is 4, then every oscillation with period 4 or less is replaced by the constant average value, and rotating cells visually stand still. Higher filter setting allow to cease oscillations of higher period. This is also done by Lanczos filter.
     </p>
     <h2>Using the simulator</h2>
-    <h3>Scene description language</h3>
+    <h3><a name="language"></a>Scene description language</h3>
     <p>Both 3d and 2d simulators use a simple language to describe loaded scenes, that is superset of the RLE (i.e. bare RLE code for the pattern is a valid scene description). The language makes it simpler to combine multiple patterns and assign colors to cells.
     </p>
-      <h3><a name="language"></a>Scene description language</h3>
-      <p>
-	Scene is described by a sequence of statements, separated by newlines or ";". Statement names are case-sensitive.
-	Four statements are supported:
-	<dl>
-	  <dt><span class="command">at</span> <span class="arg1">X<span> <span class="arg2">Y</span></dt>
-	  <dd>Sets current origin to the cell with coordinates <span class="arg1">X</span>, <span class="arg2">Y</span>. Used by the following <span class="command">rle</span> commands.</dd>
-	  <dt><span class="command">--</span> <span class="arg1">TEXT</span></dt>
-	  <dd>Defines description text. Several lines may be defined. Text can not contain semicolons (;).</dd>
-	  
-	  <dt><span class="arg1">PATTERN_RLE</span></dt>
-	  <dd>Puts given RLE code at the current coorinates. Rle code is a standard format, used by many cellular automata simulators.
-	    <ul><li><span class="command">b</span> encodes empty cell,</li>
-	      <li><span class="command">o</span> - alive cell,</li>
-	      <li><span class="command">$</span> - new line,</li>
-	      <li>numbers encode repeat count of the following character.</li>
-	    </ul>
-	  </dd>
-	  
-	  <dt><span class="command">colors</span> <span class="arg1">COLOR-LIST</span></dt>
-	  <dd>Sets current color palette. When adding patterns, new cell colors are taken from this pattern.
-	    <span class="arg1">COLOR-LIST</span> can be either a ":"-separated list of any CSS colors, or the text "default". In the latter case, pattern is returned to the default. Example: <span class="command">colors</span> <span class="arg1">red:#00ff00:rgb(0,0,255)</span>.
-	  </dd>
-	</dl>
-	Effect of the <span class="command">at</span> and <span class="command">colors</span> statements lasts until they are redefined. Additional spaces and empty lines are ignored.
-      </p>    
-      
+    <p>
+      Scene is described by a sequence of statements, separated by newlines or ";". Statement names are case-sensitive.
+      Four statements are supported:
+      <dl>
+	<dt><span class="command">at</span> <span class="arg1">X<span> <span class="arg2">Y</span></dt>
+	<dd>Sets current origin to the cell with coordinates <span class="arg1">X</span>, <span class="arg2">Y</span>. Used by the following <span class="command">rle</span> commands.</dd>
+	<dt><span class="command">--</span> <span class="arg1">TEXT</span></dt>
+	<dd>Defines description text. Several lines may be defined. Text can not contain semicolons (;).</dd>
+	
+	<dt><span class="arg1">PATTERN_RLE</span></dt>
+	<dd>Puts given RLE code at the current coorinates. Rle code is a standard format, used by many cellular automata simulators.
+	  <ul><li><span class="command">b</span> encodes empty cell,</li>
+	    <li><span class="command">o</span> - alive cell,</li>
+	    <li><span class="command">$</span> - new line,</li>
+	    <li>numbers encode repeat count of the following character.</li>
+	  </ul>
+	</dd>
+	
+	<dt><span class="command">colors</span> <span class="arg1">COLOR-LIST</span></dt>
+	<dd>Sets current color palette. When adding patterns, new cell colors are taken from this pattern.
+	  <span class="arg1">COLOR-LIST</span> can be either a ":"-separated list of any CSS colors, or the text "default". In the latter case, pattern is returned to the default. Example: <span class="command">colors</span> <span class="arg1">red:#00ff00:rgb(0,0,255)</span>.
+	</dd>
+      </dl>
+      Effect of the <span class="command">at</span> and <span class="command">colors</span> statements lasts until they are redefined. Additional spaces and empty lines are ignored.
+    </p>    
+    
     
     <h1>More information</h1>
     <p> Here are some my pages, where you can find more information about reversible cellular automata and Single Rotation rule.
