@@ -1,4 +1,3 @@
-{parseRle} = require "../rle"
 {parseFieldDescriptionlLanguage} = require "../fdl_parser"
 
 container = undefined
