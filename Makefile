@@ -13,7 +13,7 @@ flight-app.js: flight-app.coffee
 default_library.js: default_library.coffee
 	coffee -c default_library.coffee
 
-flight.js: flight-app.js revca_track.js rle.js
+flight.js: flight-app.js revca_track.js rle.js fdl_parser.js
 	browserify flight-app.js -o flight.js
 
 flight.min.js: flight.js
@@ -23,6 +23,8 @@ clean:
 	rm revca_track.js flight-app.js flight.js\
 	   flight.min.js default_library.js
 
+fdl_parser.js: fdl_parser.coffee
+	coffee -c fdl_parser.coffee
 
 publish: flight.js
 	cp -r flight.js default_library.js singlerot-smooth.html help.html help.css styles.css images ../dmishin.github.io/singlerot-smooth
