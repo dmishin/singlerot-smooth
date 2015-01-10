@@ -10,8 +10,6 @@ stepsPerMs = 10 / 1000
 
 visibilityDistance = 10000
 
-showStats = false
-
 palette = [0xfe8f0f, 0xf7325e, 0x7dc410, 0xfef8cf, 0x0264ed]
 
 requestStop = false
@@ -19,7 +17,7 @@ requestStop = false
 
 class WorkerFlyingCurves
   constructor: (startZ=4000, endZ=-4000) ->
-    @worker = new Worker "./tubing_worker_browser.js"
+    @worker = new Worker "./tubing_worker_app.js"
     @worker.addEventListener "message", (e)=>@_onMsg(e)
 
     
@@ -225,10 +223,10 @@ init = ->
   container.appendChild renderer.domElement
   
   #
-  if showStats
+  if Stats?
     stats = new Stats()
     stats.domElement.style.position = "absolute"
-    stats.domElement.style.top = "0px"
+    stats.domElement.style.bottom = "0px"
     container.appendChild stats.domElement
   
   #

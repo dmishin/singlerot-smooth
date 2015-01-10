@@ -1,22 +1,23 @@
-all: lines.treejs.js
+all: singlerot3d-app.js tubing_worker_app.js ../
+
 
 tubing.js: tubing.coffee
 	coffee -c tubing.coffee
 
-lines-app.js: lines-app.coffee
-	coffee -c lines-app.coffee
+singlerot3d.js: singlerot3d.coffee
+	coffee -c singlerot3d.coffee
 
 tubing_worker.js: tubing_worker.coffee
 	coffee -c tubing_worker.coffee
 
-tubing_worker_browser.js: tubing_worker.js tubing.js
-	browserify -o tubing_worker_browser.js tubing_worker.js
+tubing_worker_app.js: tubing_worker.js tubing.js
+	browserify -o tubing_worker_app.js tubing_worker.js
 
-lines.treejs.js: lines-app.js tubing.js tubing_worker_browser.js
-	browserify -o lines.treejs.js lines-app.js
-
+singlerot3d-app.js: singlerot3d.js tubing.js
+	browserify -o singlerot3d-app.js singlerot3d.js
 
 clean:
-	rm lines.treejs.js lines-app.js
+	rm tubing.js singlerot3d.js tubing_worker.js  tubing_worker_app.js singlerot3d-app.js
 
 
+.PHONY: clean
