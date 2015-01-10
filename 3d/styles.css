@@ -64,6 +64,15 @@ body{
     padding: 0.5em;
     margin: 0 auto;		     
 }
+.popup-window p{
+    margin-left: 2em;
+}
+.popup-window a{
+    color: #f7325e;
+}
+.popup-window a:visited{
+    color: #7dc410;
+}
 
 /** Buttons **/
 a.transparent-image-link{

@@ -17,7 +17,6 @@ getCanvasCursorPosition = (e, canvas) ->
     rect = canvas.getBoundingClientRect()
     return [e.clientX - rect.left, e.clientY - rect.top]
 
-
 class SimulatorApp
 #drawCanvasSimulation
   constructor: ->

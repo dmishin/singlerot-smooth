@@ -1,4 +1,5 @@
 {parseRle} = require "../rle"
+{parseFieldDescriptionlLanguage} = require "../fdl_parser"
 
 container = undefined
 stats = undefined
@@ -32,13 +33,13 @@ class WorkerFlyingCurves
     @taskId2dummyChunks = {}
     @nextTaskId = 0
     #continue initialization after the worker is ready
-    pattern = parseRle "$3b2o$2bobob2o$2bo5bo$7b2o$b2o$bo5bo$2b2obobo$5b2obo"
-    #pattern = parseRle "26bo$24bobo$25bo3$25bo$20bo3bobo$18bobo5bo$19bo3$19bo$14bo3bobo$12bobo5bo$13bo3$13bo$8bo3bobo$6bobo5bo$7bo3$7bo$2bo3bobo$obo5bo$bo"
-    #pattern = parseRle "b2o2$b2o2$b2o2$b2o2$b2o2$b2o2$3bo$2bo"
-    @loadPattern pattern
+    @loadFDL "$3b2o$2bobob2o$2bo5bo$7b2o$b2o$bo5bo$2b2obobo$5b2obo"
     
   _finishInitialize: (nCells, fldWidth, fldHeight, chunkLen)->
-    @colors = (palette[i%palette.length] for i in [0...nCells] by 1)
+    #Colors array must be set by the previous calls
+    if @colors.length isnt nCells
+      @colors = (palette[i%palette.length] for i in [0...nCells] by 1)
+          
     @materials = for color in @colors
       new THREE.MeshBasicMaterial color: color
 
@@ -123,9 +124,14 @@ class WorkerFlyingCurves
     for chunk in @chunks
       @group.remove chunk
     return
+
+  loadFDL: (fdlText) ->
+    parsed = parseFieldDescriptionlLanguage fdlText, palette
+    @loadPattern parsed.pattern, parsed.colors
     
-  loadPattern: (pattern) ->
+  loadPattern: (pattern, colors) ->
     @reset()
+    @colors = colors
     @worker.postMessage
       cmd: "init"
       pattern: pattern
@@ -224,16 +230,22 @@ onWindowResize = ->
   return
   
 showPatternsWindow = ->
-  #requestStop = true
   controls.enabled = false
   patterns = document.getElementById "patterns-window"  
-  patterns.style.display = ""
+  patterns.style.display = "" #reset "none" and apply setting from css
 
 hidePatternsWindow = ->
   controls.enabled = true
   patterns = document.getElementById "patterns-window"  
-  patterns.style.display = "none"
-  #animate()
+  patterns.style.display = "none"#override CSS and hide.
+
+loadCustomPattern = ->
+  try
+    curves.loadFDL document.getElementById("custom-rle").value
+    true
+  catch e
+    alert ""+e
+    false
   
 bindEvents = ->
   E = (eid)->document.getElementById eid
@@ -250,7 +262,13 @@ bindEvents = ->
      if (e.target || e.srcElement).id is "patterns-window"
        hidePatternsWindow()
   E("btn-close-patterns").addEventListener "click", hidePatternsWindow
-  
+  E("btn-load-custom").addEventListener "click", (e)->
+    if loadCustomPattern() then hidePatternsWindow()
+  E("select-pattern").addEventListener "change", (e)->
+    if (rle=E("select-pattern").value)
+      curves.loadFDL rle
+      hidePatternsWindow()
+      
 
 prevTime = null
 
@@ -265,7 +283,7 @@ animate = ->
 
   time = Date.now()
   if prevTime isnt null
-    dt = Math.min(time-prevTime, 100) #if FPS fals below 10, slow down simulation instead.
+    dt = Math.min(time-prevTime, 100) #if FPS falls below 10, slow down simulation instead.
     curves.step stepsPerMs * dt
   prevTime = time
   return
