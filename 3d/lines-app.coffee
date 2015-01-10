@@ -82,7 +82,7 @@ class WorkerFlyingCurves
     i = 0
 
     #We must process all tubes in 75% of the chunk flyby time
-    minTimePerTube = 10 #100 tubes/second
+    minTimePerTube = 1000/30 #100 parts/second
     chunkFlybyTime = @chunkLen / stepsPerMs
 
     #How many pieces to split blueprint to
@@ -91,17 +91,27 @@ class WorkerFlyingCurves
     nPieces = Math.min(nPieces, blueprint.length)
 
     tubesPerPart = Math.ceil(blueprint.length / nPieces) | 0
+    nPieces = Math.ceil(blueprint.length / tubesPerPart) | 0
     processingDelay = completionTime / nPieces
-    
+
+    timeStart = Date.now()
+
     processPart = =>
+      if i + tubesPerPart < blueprint.length-1
+        setTimeout processPart, processingDelay
+
       for j in [0...Math.min(blueprint.length-1-i, tubesPerPart)] by 1
         tubeBp = blueprint[i]
         tubeGeom = @createTube tubeBp
         tube = new THREE.Mesh tubeGeom, @materials[i]
         chunk.add tube
         i+=1
-      if i < blueprint.length-1
-        setTimeout processPart, processingDelay
+        
+      #if i < blueprint.length-1
+      #  setTimeout processPart, processingDelay
+      #else
+      #  dt = Date.now() - timeStart
+      #  console.log "Expected completion time: #{completionTime}, actual: #{dt}"
         
     processPart()
     #console.log "Received chunk!"
