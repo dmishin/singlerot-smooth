@@ -113,15 +113,15 @@ exports.Tubing = class Tubing
       curIx += 6
       return
       
+    shape = @tubeShape
     r = @tubeRadius
 
-    x_pn=@prevNormals[tubeIndex/2]
-    y_pn=@prevNormals[tubeIndex/2+1]
-    z_pn=@prevNormals[tubeIndex/2+2]
+    normalsIndex = (tubeIndex/2*3) | 0
 
-    #x0 = xys[0][i]
-    #y0 = xys[0][i]
-    dz = @stepZ
+    x_pn=@prevNormals[normalsIndex]
+    y_pn=@prevNormals[normalsIndex+1]
+    z_pn=@prevNormals[normalsIndex+2]
+
     for iz in [ 1 ... xys.length-1 ]
       xy = xys[iz]
       xyPrev = xys[iz-1]
@@ -162,21 +162,13 @@ exports.Tubing = class Tubing
 
       #now calculate the third vector, as a X-product of
       # (xn1, yn1, zn1) X (dx, dy, dz)
-      # -dz*yn1*i +dz*xn1*j+ k*(dx*yn1-dy*xn1)
       xn2 = dy*zn1-dz*yn1
       yn2 = dz*xn1-dx*zn1
       zn2 = dx*yn1-dy*xn1
 
-      #if Math.abs(xn2**2+yn2**2+zn2**2 - 1) > 1e-3
-      #  throw new Error "Big difference N2"
-      #if Math.abs(xn1**2+yn1**2+zn1**2 - 1) > 1e-3
-      #  throw new Error "Big difference N1"
-
       vindex = curV / 3 | 0
             
-      #and push shape of the tube section
-      shape = @tubeShape
-    
+      #and push shape of the tube section    
       for i in [0 ... shape.length] by 2
         vx = shape[i]
         vy = shape[i+1]
@@ -191,9 +183,9 @@ exports.Tubing = class Tubing
           j1 = (j+1)%tubeEdges
           pushQuad vindex-tubeEdges+j, vindex+j, vindex-tubeEdges+j1, vindex+j1
 
-    @prevNormals[tubeIndex/2] = x_pn
-    @prevNormals[tubeIndex/2+1] = y_pn
-    @prevNormals[tubeIndex/2+2] = z_pn
+    @prevNormals[normalsIndex] = x_pn
+    @prevNormals[normalsIndex+1] = y_pn
+    @prevNormals[normalsIndex+2] = z_pn
     if curV isnt vs.length then throw new Error "Not all vertices filled"
 
     if curIx isnt ixs.length
