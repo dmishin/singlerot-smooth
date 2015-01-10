@@ -6,9 +6,15 @@ camera = undefined
 scene = undefined
 renderer = undefined
 controls = undefined
+curves = undefined    
 stepsPerMs = 10 / 1000
 
 visibilityDistance = 10000
+
+#Parameter of the splitted processing of tube packs: minimal time between adding separte groups of tubes.
+# When time is big, tubes are added by big portions, which is fast, but animation becomes jerky.
+# When too slow, tubes could lag.
+minTimePerTube = 1000/30 #100 parts/second
 
 palette = [0xfe8f0f, 0xf7325e, 0x7dc410, 0xfef8cf, 0x0264ed]
 
@@ -74,7 +80,7 @@ class WorkerFlyingCurves
       taskId: taskId
     dummy = new THREE.Object3D
     @taskId2dummyChunks[taskId] = dummy
-    return [dummy, taskId]
+    return dummy
     
   _receiveChunk: (blueprint, taskId)->
     chunk = @taskId2dummyChunks[taskId]
@@ -84,7 +90,6 @@ class WorkerFlyingCurves
     i = 0
 
     #We must process all tubes in 75% of the chunk flyby time
-    minTimePerTube = 1000/30 #100 parts/second
     chunkFlybyTime = @chunkLen / stepsPerMs
 
     #How many pieces to split blueprint to
@@ -171,22 +176,20 @@ class WorkerFlyingCurves
     if @lastChunkZ < @zMax
       #console.log "last chunk is at #{@lastChunkZ}, Requesting new chunk..."
       #Posts request to the worker and quickly returns dummy
-      [chunk, taskId] = @requestChunk()
+      chunk = @requestChunk()
       @lastChunkZ += @chunkLen
       chunk.position.setZ @lastChunkZ
       @chunks.push chunk
       @group.add chunk
-      #console.log "Requested #{taskId}, added dummy at #{@lastChunkZ} chunk of len #{@chunkLen}"
     return
         
 
-curves = undefined    
           
 init = ->
   container = document.getElementById("container")
   
   #
-  camera = new THREE.PerspectiveCamera(27, window.innerWidth / window.innerHeight, 1, 10500)
+  camera = new THREE.PerspectiveCamera(27, window.innerWidth / window.innerHeight, 1, visibilityDistance * 1.1)
   camera.position.set 300, 0, -1550
   scene = new THREE.Scene()
   scene.fog = new THREE.Fog 0x000505, visibilityDistance*0.85, visibilityDistance
@@ -195,7 +198,7 @@ init = ->
   controls = new THREE.TrackballControls  camera
 
   controls.rotateSpeed = 1.0
-  controls.zoomSpeed = 2.2
+  controls.zoomSpeed = 3.2
   controls.panSpeed = 0.8
 
   controls.noZoom = false
@@ -206,9 +209,6 @@ init = ->
 
   controls.keys = [ 65, 83, 68 ]
 
-  #controls.addEventListener 'change', render
-
-  #curves = new ChunkedFlyingCurves
   curves = new WorkerFlyingCurves visibilityDistance, -0.5*visibilityDistance
   
   lines = new THREE.Object3D
@@ -278,7 +278,7 @@ bindEvents = ->
   E("select-pattern").addEventListener "change", (e)->
     if (rle=E("select-pattern").value)
       curves.loadFDL rle
-      document.getElementById("custom-rle").value = rle
+      E("custom-rle").value = rle
       hidePatternsWindow()
 
 initLibrary = ->
@@ -287,12 +287,14 @@ initLibrary = ->
     for fdl in window.defaultLibrary
       parsed = parseFieldDescriptionlLanguage fdl, palette
       select.options[select.options.length] = new Option parsed.name, fdl
-  return      
+  return
+  
 prevTime = null
 
 animate = ->
   if requestStop
     requestStop = false
+    prevTime = null
     return
   requestAnimationFrame animate
   render()
@@ -306,11 +308,10 @@ animate = ->
   prevTime = time
   return
   
-render = ->
-  renderer.render scene, camera
-  return
+render = -> renderer.render scene, camera
   
 Detector.addGetWebGLMessage()  unless Detector.webgl
+
 bindEvents()
 init()
 initLibrary()
