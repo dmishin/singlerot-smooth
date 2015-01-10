@@ -8,14 +8,17 @@ renderer = undefined
 controls = undefined
 stepsPerMs = 10 / 1000
 
+visibilityDistance = 10000
+
 showStats = false
 
 palette = [0xfe8f0f, 0xf7325e, 0x7dc410, 0xfef8cf, 0x0264ed]
 
 requestStop = false
 
+
 class WorkerFlyingCurves
-  constructor: ->
+  constructor: (startZ=4000, endZ=-4000) ->
     @worker = new Worker "./tubing_worker_browser.js"
     @worker.addEventListener "message", (e)=>@_onMsg(e)
 
@@ -23,14 +26,15 @@ class WorkerFlyingCurves
     @scale = scale = 30
     @group = new THREE.Object3D
     @chunks = []
-    @zMin = -4000 / scale
-    @zMax = 4000 / scale
+    @zMin = endZ / scale
+    @zMax = startZ / scale
     @lastChunkZ = 0
 
     @group.scale.set scale, scale, scale
     @ready = false
     @taskId2dummyChunks = {}
     @nextTaskId = 0
+    @chunkSize = 500
     #continue initialization after the worker is ready
     @loadFDL "$3b2o$2bobob2o$2bo5bo$7b2o$b2o$bo5bo$2b2obobo$5b2obo"
     
@@ -122,7 +126,7 @@ class WorkerFlyingCurves
     
     tube.addAttribute 'position', new THREE.BufferAttribute(blueprint.v, 3)
     tube.addAttribute 'index', new THREE.BufferAttribute(blueprint.idx, 1)
-    #tube.computeBoundingSphere() #do we need it?
+    tube.computeBoundingSphere() #do we need it?
     return  tube
 
   #remove all tubes, return to the initial state.
@@ -144,9 +148,9 @@ class WorkerFlyingCurves
     @worker.postMessage
       cmd: "init"
       pattern: pattern
-      chunkSize: 500
+      chunkSize: @chunkSize
       skipSteps: 1
-      size: 128
+      size: 100
       # _finishInitialize invoked on responce
     
   step: (dz) ->
@@ -185,29 +189,29 @@ init = ->
   
   #
   camera = new THREE.PerspectiveCamera(27, window.innerWidth / window.innerHeight, 1, 10500)
-  camera.position.set 500, 0, -1750
+  camera.position.set 300, 0, -1550
   scene = new THREE.Scene()
-  scene.fog = new THREE.Fog 0x050505, 2000, 10500
+  scene.fog = new THREE.Fog 0x000505, visibilityDistance*0.85, visibilityDistance
   #scene.add new THREE.AmbientLight 0x444444 
 
   controls = new THREE.TrackballControls  camera
 
   controls.rotateSpeed = 1.0
-  controls.zoomSpeed = 1.2
+  controls.zoomSpeed = 2.2
   controls.panSpeed = 0.8
 
   controls.noZoom = false
   controls.noPan = false
 
   controls.staticMoving = true
-  controls.dynamicDampingFactor = 0.3
+  controls.dynamicDampingFactor = 0.9
 
   controls.keys = [ 65, 83, 68 ]
 
   #controls.addEventListener 'change', render
 
   #curves = new ChunkedFlyingCurves
-  curves = new WorkerFlyingCurves
+  curves = new WorkerFlyingCurves visibilityDistance, -0.5*visibilityDistance
   
   lines = new THREE.Object3D
   lines.add curves.group
