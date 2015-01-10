@@ -12,6 +12,8 @@ showStats = false
 
 palette = [0xfe8f0f, 0xf7325e, 0x7dc410, 0xfef8cf, 0x0264ed]
 
+requestStop = false
+
 class WorkerFlyingCurves
   constructor: ->
     @worker = new Worker "./tubing_worker_browser.js"
@@ -222,15 +224,16 @@ onWindowResize = ->
   return
   
 showPatternsWindow = ->
-  patterns = document.getElementById "patterns-window"
-  
+  #requestStop = true
+  controls.enabled = false
+  patterns = document.getElementById "patterns-window"  
   patterns.style.display = ""
 
 hidePatternsWindow = ->
-  patterns = document.getElementById "patterns-window"
-  
+  controls.enabled = true
+  patterns = document.getElementById "patterns-window"  
   patterns.style.display = "none"
-  
+  #animate()
   
 bindEvents = ->
   E = (eid)->document.getElementById eid
@@ -243,9 +246,18 @@ bindEvents = ->
 
   E("btn-show-patterns").addEventListener "click", showPatternsWindow
 
+  E("patterns-window").addEventListener "click", (e)->
+     if (e.target || e.srcElement).id is "patterns-window"
+       hidePatternsWindow()
+  E("btn-close-patterns").addEventListener "click", hidePatternsWindow
+  
+
 prevTime = null
 
 animate = ->
+  if requestStop
+    requestStop = false
+    return
   requestAnimationFrame animate
   render()
   controls.update()
