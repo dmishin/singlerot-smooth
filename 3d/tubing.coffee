@@ -9,15 +9,19 @@ nGonVertices = (n, r) ->
     shape.push r*Math.cos(angle)
     shape.push r*Math.sin(angle)
   return shape
+
+bottomRight = (pattern)->
+  [ Math.max( (xy[0] for xy in pattern) ... ),
+    Math.max( (xy[1] for xy in pattern) ... ) ]
 ###Pure class, without THREE.js code.
 #  Creates "blueprints" of the tube geometries
 ###
 exports.Tubing = class Tubing
   constructor: (pattern, options)->
-    size = options.size ? 64
-    simulator = new Simulator size, size #field size
-    patW = Math.max( (xy[0] for xy in pattern) ... )
-    patH = Math.max( (xy[1] for xy in pattern) ... )
+    @size = options.size ? 64
+
+    simulator = new Simulator @size, @size #field size
+    [patW, patH] = bottomRight pattern
     #Offset to put pattern to the center
     cx = ((simulator.width - patW)/2) & ~1
     cy = ((simulator.height - patH)/2) & ~1
@@ -40,6 +44,7 @@ exports.Tubing = class Tubing
 
     # x, y pairs of the tube cross-section
     @tubeShape = nGonVertices (options.tubeSides ? 3), (options.tubeRadius ? 0.1)
+    
   #to make chunk of N segments, we need n+3 states.
   # before-first, first, ... , last, after-last.
   #
@@ -132,7 +137,7 @@ exports.Tubing = class Tubing
 
       qxy = Math.sqrt( dx*dx+dy*dy)
       #zn1 = 0
-      if qxy < 1e-6
+      if qxy < 1e-3
         xn1 = 1.0
         yn1 = 0.0
       else
@@ -166,7 +171,7 @@ exports.Tubing = class Tubing
     if curIx isnt ixs.length
       ixs = ixs.subarray 0, curIx
 
-    #Bluepring
+    #Blueprint: vertices and indices
     return{
       v: vs
       idx: ixs

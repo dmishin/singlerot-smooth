@@ -33,13 +33,7 @@ class WorkerFlyingCurves
     pattern = parseRle "$3b2o$2bobob2o$2bo5bo$7b2o$b2o$bo5bo$2b2obobo$5b2obo"
     #pattern = parseRle "26bo$24bobo$25bo3$25bo$20bo3bobo$18bobo5bo$19bo3$19bo$14bo3bobo$12bobo5bo$13bo3$13bo$8bo3bobo$6bobo5bo$7bo3$7bo$2bo3bobo$obo5bo$bo"
     #pattern = parseRle "b2o2$b2o2$b2o2$b2o2$b2o2$b2o2$3bo$2bo"
-    @worker.postMessage
-      cmd: "init"
-      pattern: pattern
-      chunkSize: 500
-      skipSteps: 1
-      size: 128
-      # _finishInitialize invoked on responce
+    @loadPattern pattern
     
   _finishInitialize: (nCells, fldWidth, fldHeight, chunkLen)->
     @colors = (palette[i%palette.length] for i in [0...nCells] by 1)
@@ -55,7 +49,7 @@ class WorkerFlyingCurves
   _onMsg: (e)->
     cmd = e.data.cmd
     unless cmd?
-      console.log "Unknown message received! #{JSON.stringify e.data}"
+      console.log "Bad message received! #{JSON.stringify e.data}"
       return
     switch cmd
       when "init"
@@ -70,7 +64,7 @@ class WorkerFlyingCurves
   # taskId is ID of the sent task
   requestChunk: ->
     taskId = @nextTaskId
-    @nextTaskId += 1
+    @nextTaskId = (taskId + 1) % 65536 #just because.
     @worker.postMessage
       cmd: "chunk"
       taskId: taskId
@@ -85,8 +79,18 @@ class WorkerFlyingCurves
     delete @taskId2dummyChunks[taskId]
     i = 0
 
-    tubesPerPart = 1
-    processingDelay = 100
+    #We must process all tubes in 75% of the chunk flyby time
+    minTimePerTube = 10 #100 tubes/second
+    chunkFlybyTime = @chunkLen / stepsPerMs
+
+    #How many pieces to split blueprint to
+    completionTime = Math.min(1000, chunkFlybyTime * 0.75)
+    nPieces = completionTime/minTimePerTube | 0
+    nPieces = Math.min(nPieces, blueprint.length)
+
+    tubesPerPart = Math.ceil(blueprint.length / nPieces) | 0
+    processingDelay = completionTime / nPieces
+    
     processPart = =>
       for j in [0...Math.min(blueprint.length-1-i, tubesPerPart)] by 1
         tubeBp = blueprint[i]
@@ -103,19 +107,30 @@ class WorkerFlyingCurves
     
   createTube: (blueprint)->
     tube = new THREE.BufferGeometry()
-
-    vs = blueprint.v
-    ixs = blueprint.idx
-    tube.addAttribute 'position', new THREE.BufferAttribute(vs, 3)
-    tube.addAttribute 'index', new THREE.BufferAttribute(ixs, 1)
+    
+    tube.addAttribute 'position', new THREE.BufferAttribute(blueprint.v, 3)
+    tube.addAttribute 'index', new THREE.BufferAttribute(blueprint.idx, 1)
     #tube.computeBoundingSphere() #do we need it?
     return  tube
 
-  loadPattern: (rle) ->
-    pattern = parseRle rle
+  #remove all tubes, return to the initial state.
+  reset: ->
+    #we don't expect any more chunks
+    @taskId2dummyChunks = {}
+    @lastChunkZ = 0
+    for chunk in @chunks
+      @group.remove chunk
+    return
+    
+  loadPattern: (pattern) ->
+    @reset()
     @worker.postMessage
-      cmd:"load"
+      cmd: "init"
       pattern: pattern
+      chunkSize: 500
+      skipSteps: 1
+      size: 128
+      # _finishInitialize invoked on responce
     
   step: (dz) ->
     unless @ready
@@ -205,7 +220,27 @@ onWindowResize = ->
   renderer.setSize window.innerWidth, window.innerHeight
   controls.handleResize()
   return
+  
+showPatternsWindow = ->
+  patterns = document.getElementById "patterns-window"
+  
+  patterns.style.display = ""
 
+hidePatternsWindow = ->
+  patterns = document.getElementById "patterns-window"
+  
+  patterns.style.display = "none"
+  
+  
+bindEvents = ->
+  E = (eid)->document.getElementById eid
+  setSpeed = (speed) -> (e) -> stepsPerMs = speed * 1e-3
+  E("btn-speed-0").addEventListener "click", setSpeed 0
+  E("btn-speed-1").addEventListener "click", setSpeed 10
+  E("btn-speed-2").addEventListener "click", setSpeed 30
+  E("btn-speed-3").addEventListener "click", setSpeed 100
+
+  E("btn-show-patterns").addEventListener "click", showPatternsWindow
 
 prevTime = null
 
@@ -227,5 +262,6 @@ render = ->
   return
   
 Detector.addGetWebGLMessage()  unless Detector.webgl
+bindEvents()
 init()
 animate()

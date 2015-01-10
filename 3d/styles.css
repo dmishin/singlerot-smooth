@@ -1,0 +1,160 @@
+
+select {
+    background-color: #232;
+    color: #eff;
+    padding: 0.2em;
+    font-size: 1em;
+    border: none;
+    margin: 0 0.2em 0 0.2em;
+}
+
+
+/* ******************************
+*  Main window layout 
+*/
+body{
+    color: #fff;
+    background-color: #222;
+    margin: 0;
+    padding: 0;
+}
+#controls{
+    display: none;
+    background-color: rgba(255,255,255,0.1);
+    width: 100%;
+    overflow: hidden;
+}
+
+.top-right-toolbar{
+    position: absolute;
+    right:0;
+}
+
+.top-toolbar{
+    position: absolute;
+    left:0;
+    right:0;
+    margin-left:auto;
+    margin-right:auto;
+}
+#clear-box{
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+#main-screen{
+    margin: 0;
+    text-align: center;
+    background-color: #000;
+}
+.controls-row{
+    display: table-row;
+}
+.controls-cell{
+    display: table-cell;
+}
+.label{
+    text-align:right;
+}
+
+.grow-menu {
+    height: 2em; /* Origional height */
+    transition:height 0.5s; /* Animation time */
+    -webkit-transition:height 0.5s; /* For Safari */
+    overflow: hidden;
+}
+.grow-menu:hover {
+    height: 8em; /* This is the height on hover */
+    background-color: rgba(255,255,255,0.2);
+}
+
+
+a.transparent-image-link{
+    background: transparent;
+    border-style: none;
+    font-size: 1em;
+    padding: 0;
+    margin: 0;
+    outline: 0;
+}
+.transparent-image-link img{
+    opacity: 0.5;
+}
+.transparent-image-link:hover img{
+    opacity: 1.0;
+}
+
+button.transparent-image-button{
+    font-size: 1em;
+    background: transparent;
+    border: none !important;
+    padding: 0;
+    margin: 0;
+}
+.transparent-image-button img{
+    opacity: 0.5;
+}
+.transparent-image-button:hover img{
+    opacity: 1.0;
+}
+
+/*library*/
+ul.library{
+    display:block;
+    padding-left: 2em;
+    font-size: 80%;
+}
+ul.library > li{
+    display:inline-block;
+    vertical-align: top;
+    margin: 0 0.2em 0.2em 0;
+    padding-top: 0.2em;
+    width: 6em;
+    cursor: pointer;
+}
+ul.library > li:hover{
+    background-color: #445;
+}
+
+.library a{
+    color: #fff;
+    text-decoration: none;
+}
+.library a:visited{
+    color: #ffa;
+}
+
+.library-icon {
+    text-align: center;
+}
+
+/*** Custon scene ****/
+#scene-editor div{
+    padding-left: 2em;
+}
+#scene-editor textarea{
+    width: 80%;
+    height: 8em;
+    border: 0px solid #0264ed;
+    padding: 0.5em;
+    font-family: monospace;
+    background-color: #333;
+    color: #fff;
+}
+
+dl{
+    padding-left: 2em;
+}
+dt{
+    font-weight: bold;
+}
+.command {
+    color: #f7325e;
+}
+.arg1 {
+    color: #fe8f0f;
+}
+.arg2 {
+    color: #7dc410;
+}
+

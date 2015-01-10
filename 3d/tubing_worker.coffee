@@ -14,6 +14,12 @@ initialize = (options)->
     fldHeight: tubing.isim.simulator.height
     chunkLen: tubing.chunkLen()
 
+setOptions= (options)->
+  throw new Error "Not initialized" unless tubing?
+  for [name, value] in options
+    tubing[name] = value
+  return
+  
 generateChunk = (taskId)->
   bp = tubing.makeChunkBlueprint()
   transferables=[]
@@ -38,5 +44,7 @@ self.addEventListener "message", (e)->
       initialize e.data
     when "chunk"
       generateChunk e.data.taskId
+    when "set"
+      setOptions e.data.options
     else
       throw new Error "Unknown command received by worker: #{cmd}"

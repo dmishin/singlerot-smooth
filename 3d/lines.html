@@ -4,26 +4,39 @@
     <title>Single Rotation 3d</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <style>
-      body {
-      color: #cccccc;
-      font-family:Monospace;
-      font-size:13px;
-      text-align:center;
-
-      background-color: #000000;
-      margin: 0px;
-      overflow: hidden;
-      }
-
-      a {
-      color: #0080ff;
-      }
-
-    </style>
+    <link rel="stylesheet" type="text/css" href="styles.css"/>
   </head>
   <body>
 
+    <div class="top-toolbar">
+      <button id="btn-speed-0" class="transparent-image-button" title="Stop">
+	<img src="../images/ic_pause_24px.svg" style="width:3em;height:3em">
+      </button>
+      <button id="btn-speed-1" class="transparent-image-button" title="Stop">
+	<img src="../images/ic_pause_24px.svg" style="width:3em;height:3em">
+      </button>
+      <button id="btn-speed-2" class="transparent-image-button" title="Stop">
+	<img src="../images/ic_pause_24px.svg" style="width:3em;height:3em">
+      </button>
+      <button id="btn-speed-3" class="transparent-image-button" title="Stop">
+	<img src="../images/ic_pause_24px.svg" style="width:3em;height:3em">
+      </button>
+    </div>
+
+    
+    <div class="top-right-toolbar">
+      <button id="btn-show-patterns" class="transparent-image-button" title="Load pattern">
+	<img src="../images/ic_pause_24px.svg" style="width:3em;height:3em">
+      </button>
+      <a href="help.html" target="_blank" class="transparent-image-link" title="What's this?">
+	<img src="../images/ic_help_24px.svg" style="width:3em;height:3em">
+      </a>
+    </div>
+      
+    <div id="patterns-window" style="display:none">
+      
+    </div>
+    
     <div id="container"></div>
     
 
