@@ -46,15 +46,25 @@
     
     <div id="patterns-window" style="display:none" class="popup-window">
       <div>
-	<p>Load predefined pattern:</p>
-	<select id="select-pattern"><option value=""></option></select>
-	<p>Or enter RLE of the custom pattern. For options for coloring cells and combining patterns, see <a target="_blank" href="../help.html#language">language description here</a>. See also the <a target="_blank" href="http://dmishin.github.io/singlerot-spaceships/singlerot-spaceships.html">library of the Single Rotation spaceships</a> for additional patterns to try.
-	</p>
-	<textarea id="custom-rle"></textarea>
-	<button id="btn-load-custom">Load</button>
+	<p>
+	Load predefined pattern:
 	<br/>
-	<button id="btn-close-patterns">OK</button>
+	<select id="select-pattern"><option value=""></option></select>
+	</p>
+	<p>
+	Or enter RLE of the custom pattern. For options for coloring cells and combining patterns, see <a target="_blank" href="../help.html#language">language description here</a>. See also the <a target="_blank" href="http://dmishin.github.io/singlerot-spaceships/singlerot-spaceships.html">library of the Single Rotation spaceships</a> for additional patterns to try.
+	<br/>
+	<textarea id="custom-rle"></textarea>
+	<br/>
+	<button id="btn-load-custom">Load</button>
+	</p>
+	<div id="toolbar-close">
+	  <button id="btn-close-patterns" class="transparent-image-button" title="Close">
+	    <img src="../images/ic_clear_24px.svg" style="width:3em;height:3em">
+	  </button>
+	</div>
       </div>
+	
     </div>
     
     <script src="../default_library.js"></script>

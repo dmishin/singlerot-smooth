@@ -62,16 +62,24 @@ body{
     width: 70%;
     background-color: black;
     padding: 0.5em;
-    margin: 0 auto;		     
+    margin: 0 auto;
+    position: relative; /*For positioning close button*/
 }
 .popup-window p{
-    margin-left: 2em;
+    margin-left: 1em;
+    margin-right: 1em;
 }
 .popup-window a{
     color: #f7325e;
 }
 .popup-window a:visited{
     color: #7dc410;
+}
+
+#toolbar-close{
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 
 /** Buttons **/
@@ -104,38 +112,8 @@ button.transparent-image-button{
     opacity: 1.0;
 }
 
-/*library*/
-ul.library{
-    display:block;
-    padding-left: 2em;
-    font-size: 80%;
-}
-ul.library > li{
-    display:inline-block;
-    vertical-align: top;
-    margin: 0 0.2em 0.2em 0;
-    padding-top: 0.2em;
-    width: 6em;
-    cursor: pointer;
-}
-ul.library > li:hover{
-    background-color: #445;
-}
-
-.library a{
-    color: #fff;
-    text-decoration: none;
-}
-.library a:visited{
-    color: #ffa;
-}
-
-.library-icon {
-    text-align: center;
-}
-
 textarea{
-    width: 80%;
+    width: 100%;
     height: 8em;
     border: 0px solid #0264ed;
     padding: 0.5em;
@@ -143,20 +121,3 @@ textarea{
     background-color: #333;
     color: #fff;
 }
-
-dl{
-    padding-left: 2em;
-}
-dt{
-    font-weight: bold;
-}
-.command {
-    color: #f7325e;
-}
-.arg1 {
-    color: #fe8f0f;
-}
-.arg2 {
-    color: #7dc410;
-}
-
