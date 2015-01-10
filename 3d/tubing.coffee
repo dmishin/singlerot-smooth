@@ -44,6 +44,14 @@ exports.Tubing = class Tubing
 
     # x, y pairs of the tube cross-section
     @tubeShape = nGonVertices (options.tubeSides ? 3), (options.tubeRadius ? 0.1)
+
+    # Normals from the previous call
+    @prevNormals = new Float32Array @nCells*3
+    for i in [0...@nCells*3] by 3
+      @prevNormals[i] = 1
+      @prevNormals[i+1] = 0
+      @prevNormals[i+2] = 0
+    return
     
   #to make chunk of N segments, we need n+3 states.
   # before-first, first, ... , last, after-last.
@@ -107,6 +115,10 @@ exports.Tubing = class Tubing
       
     r = @tubeRadius
 
+    x_pn=@prevNormals[tubeIndex/2]
+    y_pn=@prevNormals[tubeIndex/2+1]
+    z_pn=@prevNormals[tubeIndex/2+2]
+
     #x0 = xys[0][i]
     #y0 = xys[0][i]
     dz = @stepZ
@@ -119,13 +131,33 @@ exports.Tubing = class Tubing
       x=xy[tubeIndex]
       y=xy[tubeIndex+1]
 
-      #vectr from the previous point to this
+      #(dx,dy,dz) is an approximate tangent
       dx = xyNext[tubeIndex] - xyPrev[tubeIndex]
       dy = xyNext[tubeIndex+1] - xyPrev[tubeIndex+1] #y-y0
       #dz = @stepZ
+      iqxyz2 = 1.0 / ( dx*dx+dy*dy+dz*dz)
+      iqxyz = 1.0 / Math.sqrt( iqxyz2 ) #normalizing K
 
       #x0 = x
       #y0 = y
+
+      #main normal is calculated by projecting the last normal 
+      # pn X tangent:
+      tan = (x_pn*dx + y_pn*dy + z_pn*dz) * iqxyz2 #tangent component, scaled by iqxyz
+      xn1 = x_pn - tan * dx
+      yn1 = y_pn - tan * dy
+      zn1 = z_pn - tan * dz
+      #now normalize it
+      inorm1 = 1.0/Math.sqrt(xn1*xn1+yn1*yn1+zn1*zn1)
+      if isFinite inorm1
+        xn1 *= inorm1
+        yn1 *= inorm1
+        zn1 *= inorm1
+      else
+        xn1=1.0
+        yn1=0.0
+        zn1=0.0
+      
 
       #compute normals
       # noraml of form
@@ -135,21 +167,20 @@ exports.Tubing = class Tubing
       # xn1 =   dx / sqrt(dx^2+dy^2)
       # yn1 = - dy / sqrt(dx^2+dy^2)
 
-      qxy = Math.sqrt( dx*dx+dy*dy)
+      #qxy = Math.sqrt( dx*dx+dy*dy)
       #zn1 = 0
-      if qxy < 1e-3
-        xn1 = 1.0
-        yn1 = 0.0
-      else
-        iqxy = 1 / qxy
-        xn1 = dy * iqxy
-        yn1 = -dx * iqxy
+      #if qxy < 1e-3
+      #  xn1 = 1.0
+      #  yn1 = 0.0
+      #else
+      #  iqxy = 1 / qxy
+      #  xn1 = dy * iqxy
+      #  yn1 = -dx * iqxy
       #now calculate the third vector, as a X-product of
-      # (xn1, yn1, 0) X (dx, dy, dz)
+      # (xn1, yn1, zn1) X (dx, dy, dz)
       # -dz*yn1*i +dz*xn1*j+ k*(dx*yn1-dy*xn1)
-      iqxyz = 1.0 / Math.sqrt( dx*dx+dy*dy+dz*dz)
-      xn2 = -dz * iqxyz * yn1
-      yn2 =  dz * iqxyz * xn1
+      xn2 = (dy*zn1-dz*yn1) * iqxyz
+      yn2 = (dz*xn1-dx*zn1) * iqxyz
       zn2 = (dx*yn1-dy*xn1) * iqxyz
 
       vindex = curV / 3 | 0
@@ -159,13 +190,20 @@ exports.Tubing = class Tubing
       for i in [0 ... shape.length] by 2
         vx = shape[i]
         vy = shape[i+1]
-        pushXYZ x+xn1*vx+xn2*vy, y+yn1*vx+yn2*vy, z+zn2*vy #+zn1*vx
-      
+        pushXYZ x+xn1*vx+xn2*vy, y+yn1*vx+yn2*vy, z+zn2*vy+zn1*vx
+
+      x_pn = xn1
+      y_pn = yn1
+      z_pn = zn1
+            
       if iz > 1 and (Math.abs(xyPrev[tubeIndex] - x)+Math.abs(xyPrev[tubeIndex+1] - y) < jumpTreshold)
         for j in [0...tubeEdges] by 1
           j1 = (j+1)%tubeEdges
           pushQuad vindex-tubeEdges+j, vindex+j, vindex-tubeEdges+j1, vindex+j1
 
+    @prevNormals[tubeIndex/2] = x_pn
+    @prevNormals[tubeIndex/2+1] = y_pn
+    @prevNormals[tubeIndex/2+2] = z_pn
     if curV isnt vs.length then throw new Error "Not all vertices filled"
 
     if curIx isnt ixs.length
