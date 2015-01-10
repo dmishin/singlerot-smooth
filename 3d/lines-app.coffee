@@ -276,9 +276,16 @@ bindEvents = ->
   E("select-pattern").addEventListener "change", (e)->
     if (rle=E("select-pattern").value)
       curves.loadFDL rle
+      document.getElementById("custom-rle").value = rle
       hidePatternsWindow()
-      
 
+initLibrary = ->
+  if window.defaultLibrary?
+    select = document.getElementById "select-pattern"
+    for fdl in window.defaultLibrary
+      parsed = parseFieldDescriptionlLanguage fdl, palette
+      select.options[select.options.length] = new Option parsed.name, fdl
+  return      
 prevTime = null
 
 animate = ->
@@ -304,4 +311,5 @@ render = ->
 Detector.addGetWebGLMessage()  unless Detector.webgl
 bindEvents()
 init()
+initLibrary()
 animate()

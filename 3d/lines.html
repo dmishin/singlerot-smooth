@@ -48,38 +48,7 @@
       <div>
 	<h2>Patterns</h2>
 	<p>Load predefined pattern:</p>
-	<select id="select-pattern">
-	  <option value="$3b2o$2bobob2o$2bo5bo$7b2o$b2o$bo5bo$2b2obobo$5b2o">
-	    Galaxy (oscillator)
-	  </option>
-	  <option value="$2o2$2o3$38bo$2o36bo$bo8bobo9bo6b3o$2bo6b2o9bobo6bo8bo$20bo17bo">
-	    All lightest spaceships
-	  </option>
-	  <option value="$6bo$2b2o3bo$bo5bo$4b2o$4b2o$2bo5bo$2bo3b2o$3bo">
-	    Galaxy 1 (oscillator)
-	  </option>
-	  <option value="2bobo$obo$4b2o$2o$3bobo$bobo">
-	    Galaxy 2 (oscillator)
-	  </option>
-	  <option value="2bo38bo$2bo12bo5bo3bo8bo8bo5bobo$bo12bo6bo2bo10bo7bo5bobo$11bo11b2o6b2o2bo$b3o8bo11b2o9bo6bo$15bo7bo17b3o$11b2obo$43bo">
-	    Fastest orthogonal spsaceships
-	  </option>
-	  <option value="26bo$24bobo$25bo3$25bo$20bo3bobo$18bobo5bo$19bo3$19bo$14bo3bobo$12bobo5bo$13bo3$13bo$8bo3bobo$6bobo5bo$7bo3$7bo$2bo3bobo$obo5bo$bo">
-	    Extensible zig-zag spaceship
-	  </option>
-	  <option value="b2o2$b2o2$b2o2$b2o2$b2o2$b2o2$3bo$2bo">
-	    Rotating line oscillator
-	  </option>
-	  <option value="2b4o$4b2o$bo2bo$2bo$bo2bobo">
-	    12-cell spaceship
-	  </option>
-	  <option value="b3o$2bo$3bo$bo$2obo$2o">
-	    11-cell spaceship
-	  </option>
-	  <option value="6bo2$b3o2$3b3o">
-	    Period 12'000 spaceship
-	  </option>
-	</select>
+	<select id="select-pattern"></select>
 	<h2>Custom pattern</h2>
 	<textarea id="custom-rle"></textarea>
 	<button id="btn-load-custom">Load</button>
@@ -114,6 +83,7 @@
       </div>
     </div>
     
+    <script src="../default_library.js"></script>
     <script src="./threejs/three.min.js"></script>
     <script src="./threejs/Detector.js"></script>
     <script src="./threejs/TrackballControls.js"></script>
