@@ -1,5 +1,5 @@
 {parseFieldDescriptionlLanguage} = require "../fdl_parser"
-
+{parseUri} = require "../parseuri"
 container = undefined
 stats = undefined
 camera = undefined
@@ -187,8 +187,13 @@ class WorkerFlyingCurves
 
           
 init = ->
+  keys = parseUri(window.location).queryKey
   container = document.getElementById("container")
-  
+
+  if keys.visibility?
+    vd = parseFloat keys.visibility
+    if vd > 0 and vd < 1e5
+      visibilityDistance=vd
   #
   camera = new THREE.PerspectiveCamera(27, window.innerWidth / window.innerHeight, 1, visibilityDistance * 1.1)
   camera.position.set 300, 0, -1550
@@ -217,7 +222,7 @@ init = ->
   scene.add lines
   
   #
-  renderer = new THREE.WebGLRenderer(antialias: false)
+  renderer = new THREE.WebGLRenderer(antialias: keys.antialias is "true")
   renderer.setSize window.innerWidth, window.innerHeight
   renderer.gammaInput = true
   renderer.gammaOutput = true

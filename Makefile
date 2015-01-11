@@ -21,14 +21,18 @@ flight.min.js: flight.js
 
 clean:
 	rm revca_track.js flight-app.js flight.js\
-	   flight.min.js default_library.js
+	   flight.min.js default_library.js parseuri.js
 
 fdl_parser.js: fdl_parser.coffee
 	coffee -c fdl_parser.coffee
 
-publish: flight.js
+pre-publish: flight.js
 	cp -r flight.js default_library.js singlerot-smooth.html help.html help.css styles.css images ../dmishin.github.io/singlerot-smooth
+publish: pre-publish
 	cd ../dmishin.github.io/singlerot-smooth && \
 	git add -A && \
 	git commit -m "Publish automatically" && \
 	git push 
+parseuri.js: parseuri.coffee
+	coffee -c parseuri.coffee
+.PHONY: publish pre-publish clean
