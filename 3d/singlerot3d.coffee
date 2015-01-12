@@ -105,10 +105,10 @@ class WorkerFlyingCurves
     timeStart = Date.now()
 
     processPart = =>
-      if i + tubesPerPart < blueprint.length-1
+      if i + tubesPerPart < blueprint.length
         setTimeout processPart, processingDelay
 
-      for j in [0...Math.min(blueprint.length-1-i, tubesPerPart)] by 1
+      for j in [0...Math.min(blueprint.length-i, tubesPerPart)] by 1
         tubeBp = blueprint[i]
         tubeGeom = @createTube tubeBp
         tube = new THREE.Mesh tubeGeom, @materials[i]
