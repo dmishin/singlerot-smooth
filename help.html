@@ -9,7 +9,16 @@
   <body>
     <h1>What is this?</h1>
     <figure>
-      <img src="images/singlerot-smooth.png">
+      <a href="singlerot-smooth.html">
+	<img src="images/singlerot-smooth.png">
+      </a>
+      <figcaption><a href="singlerot-smooth.html">2D version</a></figcaption>
+    </figure>
+    <figure>
+      <a href="3d/singlerot-3d.html">
+	<img src="images/singlerot-3d.png">
+      </a>
+      <figcaption><a href="3d/singlerot-3d.html">3D version</a></figcaption>
     </figure>
     <p>It's a simulator of
       the <a href="http://dmishin.blogspot.com/2013/11/the-single-rotation-rule-remarkably.html">Single
@@ -40,6 +49,7 @@
     <h2>Oscillation filtering</h2>
     <p>One can easily check that in the "Single Rotation" rule a single cell would constantly rotate with period 4. To make this less annoying, a possibility to filter higher frequencies of the cell movement is added. For example, when "filter" setting is 4, then every oscillation with period 4 or less is replaced by the constant average value, and rotating cells visually stand still. Higher filter setting allow to cease oscillations of higher period. This is also done by Lanczos filter.
     </p>
+    <h1><a name="version2d"></a>2D version</h1>
     <h2>Using the simulator</h2>
     <h3><a name="language"></a>Scene description language</h3>
     <p>Both 3d and 2d simulators use a simple language to describe loaded scenes, that is superset of the RLE (i.e. bare RLE code for the pattern is a valid scene description). The language makes it simpler to combine multiple patterns and assign colors to cells.
@@ -69,8 +79,49 @@
       </dl>
       Effect of the <span class="command">at</span> and <span class="command">colors</span> statements lasts until they are redefined. Additional spaces and empty lines are ignored.
     </p>    
-    
-    
+
+    <h1><a name="version3d"></a>3D version</h1>
+    <p>
+      The 3D version visualizes world lines of cells, mapping time to 3rd dimension.
+    </p>
+    <h2>URL arguments</h2>
+    <p>3D application accepts a range of advanced configuration parameters
+      available via URL arguments. Argument names are case-sensitive.
+      <ul>
+	<li><b><a href="http://dmishin.github.io/singlerot-smooth/3d/singlerot-3d.html?antialias=true">antialias=true</a></b>
+	  <br/>
+	  Enables anti-aliasing, making smoother images but reducing performance.
+	</li>
+	<li><b>visibility=<i>distance</i></b><br/>
+	  where <i>distance</i> is a number in the range 1000 ~ 50'000. It defines, how far the world lines are seen. Big distance significantly decreases FPS. Here are some sample links:
+	  <ul>
+	    <li><a href="http://dmishin.github.io/singlerot-smooth/3d/singlerot-3d.html?visibility=3000">visibility=3000</a> short distance, should improve FPS on slow machines.
+	    </li>
+	    <li><a href="http://dmishin.github.io/singlerot-smooth/3d/singlerot-3d.html?visibility=5000">visibility=5000</a> a bit shorter distance, then default.
+	    </li>
+	    <li><a href="http://dmishin.github.io/singlerot-smooth/3d/singlerot-3d.html?visibility=40000">visibility=40000</a> very long distance, if you don't need much FPS or have a fast machine.
+	    </li>
+	  </ul>
+	</li>
+	<li>Mesh generation parameters and their values:
+	  <ul>
+	    <li><b>chunkSize=500</b> 
+	      <br/>
+	      number of steps in one mesh chunk
+	    </li>
+	    <li><b>skipSteps=1</b><br/>Generate tube section every n'th step (1 - every step)</li>	
+	    <li><b>boardSize=100</b><br/>Size of the square board, must be even</li>
+	    <li><b>lanczosOrder=3</b><br/>Lanczos interpolation order, 1 ... 10. 1 - linear interpolation, 3 - smooth interpolation</li>
+	    <li><b>interpSteps=1</b><br/>How many mesh steps are there between 2 generation. integer, 1 ... 4</li>
+	    <li><b>smoothingPeriod=4</b><br/>Low-pass filter, removing oscillations with period bigger than this. integer, 1 ... 100. 1 - no filtering.</li>
+	    <li><b>timeScale=0.1</b><br/>"speed of light". z-axis length of one generation</li>
+	    <li><b>tubeRadius=0.1</b><br/>Radius of a single rube</li>
+	    <li><b>tubeSides=3</b><br/>Number of sides in the tube cross-section (2...10)</li>
+	  </ul>
+	</li>
+      </ul>
+    </p>
+      
     <h1>More information</h1>
     <p> Here are some my pages, where you can find more information about reversible cellular automata and Single Rotation rule.
       <ul>

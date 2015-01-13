@@ -57,7 +57,9 @@ class WorkerFlyingCurves
     @smoothingPeriod = 4
     #"speed of light". z-axis length of one generation
     @timeScale = 0.1
+    #Radius of a single rube
     @tubeRadius = 0.1
+    #NUmber of sides in the tube (2...10)
     @tubeSides = 3
     #continue initialization after loading
     
