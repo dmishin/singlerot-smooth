@@ -8,6 +8,34 @@ select {
     margin: 0 0.2em 0 0.2em;
 }
 
+button{
+    font-size: 1em;
+    color: #eff;
+    border: none !important;
+
+    padding: 0.5em;
+    margin: 0;
+}
+button {
+    text-decoration:none;
+    
+    background-color: #606c88; background-image: -webkit-gradient(linear, left top, left bottom, from(#606c88), to(#3f4c6b));
+    background-image: -webkit-linear-gradient(top, #606c88, #3f4c6b);
+    background-image: -moz-linear-gradient(top, #606c88, #3f4c6b);
+    background-image: -ms-linear-gradient(top, #606c88, #3f4c6b);
+    background-image: -o-linear-gradient(top, #606c88, #3f4c6b);
+    background-image: linear-gradient(to bottom, #606c88, #3f4c6b);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#606c88, endColorstr=#3f4c6b);
+}
+
+button:hover{
+ background-color: #4b546a; background-image: -webkit-gradient(linear, left top, left bottom, from(#4b546a), to(#2c354b));
+ background-image: -webkit-linear-gradient(top, #4b546a, #2c354b);
+ background-image: -moz-linear-gradient(top, #4b546a, #2c354b);
+ background-image: -ms-linear-gradient(top, #4b546a, #2c354b);
+ background-image: -o-linear-gradient(top, #4b546a, #2c354b);
+ background-image: linear-gradient(to bottom, #4b546a, #2c354b);filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#4b546a, endColorstr=#2c354b);
+}
+
 
 /* ******************************
 *  Main window layout 
