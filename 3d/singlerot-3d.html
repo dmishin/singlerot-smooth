@@ -52,7 +52,20 @@
 	<select id="select-pattern"><option value=""></option></select>
 	</p>
 	<p>
-	Or enter RLE of the custom pattern. For options for coloring cells and combining patterns, see <a target="_blank" href="../help.html#language">language description here</a>. See also the <a target="_blank" href="http://dmishin.github.io/singlerot-spaceships/singlerot-spaceships.html">library of the Single Rotation spaceships</a> for additional patterns to try.
+	  Create random pattern of <select id="random-pattern-size">
+	    <option value="10">10</option>
+	    <option value="20">20</option>
+	    <option value="30" selected>30</option>
+	    <option value="50">50</option>
+	    <option value="70">70</option>
+	    <option value="100">100</option>
+	  </select> cells.
+	  <br/>
+	  <button id="btn-make-random">Create</button>
+	</p>
+	
+	<p>
+	  Or enter RLE of the custom pattern. For options for coloring cells and combining patterns, see <a target="_blank" href="../help.html#language">language description here</a>. See also the <a target="_blank" href="http://dmishin.github.io/singlerot-spaceships/singlerot-spaceships.html">library of the Single Rotation spaceships</a> for additional patterns to try.
 	<br/>
 	<textarea id="custom-rle"></textarea>
 	<br/>

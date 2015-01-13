@@ -256,6 +256,30 @@ hidePatternsWindow = ->
   patterns = document.getElementById "patterns-window"  
   patterns.style.display = "none"#override CSS and hide.
 
+loadRandomPattern = (size) ->
+  curves.loadPattern makeRandomPattern(size)...
+  
+makeRandomPattern = (size) ->
+  cells = {}
+  pattern = []
+  colors = []
+  xyRange = Math.sqrt(size)
+  while pattern.length isnt size
+    #Generate normally distributed cells, using box-muller transform.
+    #I just want to implement it.
+    u1 = Math.random()*Math.PI
+    u2 = Math.random()
+    r = Math.sqrt(-Math.log(u2))*xyRange
+    if r>100 or r isnt r then continue
+    x = Math.round(Math.cos(u1)*r) |0
+    y = Math.round(Math.sin(u1)*r) |0
+    key = "#{x}$#{y}"
+    if key of cells then continue
+    cells[key] = true
+    pattern.push [x,y]
+    colors.push palette[pattern.length % palette.length]
+  return [pattern, colors]
+    
 loadCustomPattern = ->
   try
     curves.loadFDL document.getElementById("custom-rle").value
@@ -286,7 +310,10 @@ bindEvents = ->
       curves.loadFDL rle
       E("custom-rle").value = rle
       hidePatternsWindow()
-
+  E("btn-make-random").addEventListener "click", (e)->
+    loadRandomPattern parseInt(E("random-pattern-size").value, 10)
+    hidePatternsWindow()
+  
 initLibrary = ->
   if window.defaultLibrary?
     select = document.getElementById "select-pattern"
