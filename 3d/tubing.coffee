@@ -10,9 +10,20 @@ nGonVertices = (n, r) ->
     shape.push r*Math.sin(angle)
   return shape
 
-bottomRight = (pattern)->
-  [ Math.max( (xy[0] for xy in pattern) ... ),
-    Math.max( (xy[1] for xy in pattern) ... ) ]
+boundingBox = (pattern)->
+  if pattern.length is 0
+    return [0,0,0,0]
+    
+  xmin = xmax = pattern[0][0]
+  ymin = ymax = pattern[0][1]
+  for i in [1 ... pattern.length] by 1
+    [x,y] = pattern[i]
+    xmin = Math.min xmin, x
+    xmax = Math.max xmax, x
+    ymin = Math.min ymin, y
+    ymax = Math.max ymax, y
+  return [xmin, ymin, xmax, ymax]
+          
 ###Pure class, without THREE.js code.
 #  Creates "blueprints" of the tube geometries
 ###
@@ -21,22 +32,23 @@ exports.Tubing = class Tubing
     @size = options.size ? 64
 
     simulator = new Simulator @size, @size #field size
-    [patW, patH] = bottomRight pattern
+    [x0, y0, x1, y1] = boundingBox pattern
     #Offset to put pattern to the center
-    cx = ((simulator.width - patW)/2) & ~1
-    cy = ((simulator.height - patH)/2) & ~1
+    cx = ((simulator.width - (x0+x1))/2) & ~1
+    cy = ((simulator.height - (y0+y1))/2) & ~1
 
     simulator.put pattern, cx, cy #pattern roughly at the center
     
     order = options.lanczosOrder ? 3
     interpSteps = options.interpSteps ? 1
+    timeScale = options.timeScale ? 0.1 #how many distance units are in one second.
     smoothing = options.smoothingPeriod ? 4
 
     @isim = new CircularInterpolatingSimulator simulator, order, interpSteps, smoothing
     @skipSteps = options.skipSteps ? 1
         
     @chunkSize = options.chunkSize ? 500
-    @stepZ = 0.1
+    @stepZ = timeScale / interpSteps
     @nCells = pattern.length
     @jumpTreshold = 3
 

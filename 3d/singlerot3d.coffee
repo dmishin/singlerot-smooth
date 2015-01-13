@@ -39,9 +39,27 @@ class WorkerFlyingCurves
     @ready = false
     @taskId2dummyChunks = {}
     @nextTaskId = 0
+
+    #All these parameters are applied, when initializing worker.
+    #  (loadPattern)
+    #number of steps in one mesh chunk
     @chunkSize = 500
-    #continue initialization after the worker is ready
-    @loadFDL "$3b2o$2bobob2o$2bo5bo$7b2o$b2o$bo5bo$2b2obobo$5b2obo"
+    #generate tube section every nth step (1 - every step)
+    @skipSteps = 1
+    #size of the toroidal board, must be even!
+    @boardSize = 100
+    #interpolation order. 1 ... 3. 1 - linear interp, 3 - smooth interp
+    @lanczosOrder = 3
+    #how many mesh steps are there between 2 generation. integer, 1 ... 4
+    @interpSteps = 1
+    #Low-pass filter, removed oscillations with period bigger than this.
+    # integer, 1 ... 100. 1 - no filtering.
+    @smoothingPeriod = 4
+    #"speed of light". z-axis length of one generation
+    @timeScale = 0.1
+    @tubeRadius = 0.1
+    @tubeSides = 3
+    #continue initialization after loading
     
   _finishInitialize: (nCells, fldWidth, fldHeight, chunkLen)->
     #Colors array must be set by the previous calls
@@ -153,8 +171,14 @@ class WorkerFlyingCurves
       cmd: "init"
       pattern: pattern
       chunkSize: @chunkSize
-      skipSteps: 1
-      size: 100
+      skipSteps: @skipSteps #1
+      size: @boardSize #100
+      lanczosOrder: @lanczosOrder
+      interpSteps: @interpSteps
+      smoothingPeriod: @smoothingPeriod
+      timeScale: @timeScale #0.1
+      tubeRadius: @tubeRadius #0.1
+      tubeSides: @tubeSides
       # _finishInitialize invoked on responce
     
   step: (dz) ->
@@ -183,8 +207,34 @@ class WorkerFlyingCurves
       @chunks.push chunk
       @group.add chunk
     return
-        
-
+  #Load parameters from URI arguments
+  loadUriParameters: (keys)->
+    loadIntParam = (fieldName, keyName, isValid)=>
+      if keyName of keys
+        val = parseInt keys[keyName], 10
+        if val isnt val
+          alert "Value incorrect #{val}"
+          return
+        if isValid and not isValid(val)
+          alert "Parameter #{keyName} is incorrect"
+          return
+        this[fieldName] = val
+        #console.log "Loading paramter #{fieldName}, #{val}"
+      return
+    loadIntParam "chunkSize", "chunkSize", (s)->(s>=10 and s<100000)
+    loadIntParam "skipSteps", "skipSteps", (s)->(s>=1 and s<10000)
+    loadIntParam "boardSize", "boardSize", (s)->(s>0 and (s%2 is 0))
+    loadIntParam "lanczosOrder", "lanczosOrder", (s)->(s>=0 and s < 10)
+    loadIntParam "interpSteps", "interpSteps", (s)->(s>=1 and s <100)
+    loadIntParam "smoothingPeriod", "smoothingPeriod", (s)->(s>=1 and s <10000)
+    loadIntParam "tubeSides", "tubeSides", (s)->(s>=2 and s <10)
+    if "timeScale" of keys
+      v = parseFloat keys["timeScale"]
+      @timeScale = v if (v is v) and v > 0
+    if "tubeRadius" of keys
+      v = parseFloat keys["tubeRadius"]
+      @tubeRadius = v if (v is v) and v > 0
+    return
           
 init = ->
   keys = parseUri(window.location).queryKey
@@ -199,8 +249,6 @@ init = ->
   camera.position.set 300, 0, -1550
   scene = new THREE.Scene()
   scene.fog = new THREE.Fog 0x000505, visibilityDistance*0.85, visibilityDistance
-  #scene.add new THREE.AmbientLight 0x444444 
-
   controls = new THREE.TrackballControls  camera
 
   controls.rotateSpeed = 1.0
@@ -216,6 +264,10 @@ init = ->
   controls.keys = [ 65, 83, 68 ]
 
   curves = new WorkerFlyingCurves visibilityDistance, -0.5*visibilityDistance
+  #apply additional parameters
+  curves.loadUriParameters keys
+      
+  loadRandomPattern Math.min(20, Math.round(curves.boardSize*0.4))
   
   lines = new THREE.Object3D
   lines.add curves.group
