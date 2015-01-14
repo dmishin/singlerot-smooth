@@ -247,26 +247,27 @@ class WorkerFlyingCurves
 createIsochronePlane = (z=0)->
   #calculate plane dimensions
   [w, h] = curves.getCrossSectionSize()
-  vs = new Float32Array \
-    [ w*-0.5, h*-0.5, z,
-      w* 0.5, h*-0.5, z,
-      w*-0.5, h* 0.5, z,
-      w* 0.5, h* 0.5, z]
-  # 2 3
-  # 0 1
-  ixs = new Uint16Array [
-    0, 1, 2,
-    1, 3, 2
-    ]
-    
-  uvs = new Float32Array [
-    0, 0,   1, 0,   0, 1  #0 1 2
-    1, 0,   1, 1,   0, 1  #1 3 2
+  w2 = w*0.5
+  h2 = h*0.5
+  
+  vs = new Float32Array [ 
+    -w2, h2,0,
+    -w2,-h2,0,
+     w2, h2,0,
+    -w2,-h2,0,
+     w2,-h2,0,
+     w2, h2,0
   ]
+
+  tw=th=curves.boardSize
+  uvs = new Float32Array [
+    0,th, 0,0, tw,th,
+    0,0, tw,0, tw,th
+  ]
+  
     
   plane = new THREE.BufferGeometry()
   plane.addAttribute 'position', new THREE.BufferAttribute(vs, 3)
-  plane.addAttribute 'index', new THREE.BufferAttribute(ixs, 1)
   plane.addAttribute "uv", new THREE.BufferAttribute(uvs, 2)
   plane.computeBoundingSphere() #do we need it?
   
@@ -276,7 +277,6 @@ createIsochronePlane = (z=0)->
   
   material = new THREE.MeshBasicMaterial
     map: texture
-    #color: 0x00FF00
     side: THREE.DoubleSide
 
   planeMesh = new THREE.Mesh plane, material
