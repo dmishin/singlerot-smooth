@@ -76,6 +76,11 @@ class WorkerFlyingCurves
     @ready = true
     @chunkLen = chunkLen
     console.log "Initializatoin finished"
+
+  #Calculate geometric size (width, height) of the cross-section of the field.
+  getCrossSectionSize: ->
+    s = @boardSize * @scale
+    [s,s]
     
   _onMsg: (e)->
     cmd = e.data.cmd
@@ -238,6 +243,48 @@ class WorkerFlyingCurves
       @tubeRadius = v if (v is v) and v > 0
     return
           
+
+createIsochronePlane = (z=0)->
+  #calculate plane dimensions
+  [w, h] = curves.getCrossSectionSize()
+  vs = new Float32Array \
+    [ w*-0.5, h*-0.5, z,
+      w* 0.5, h*-0.5, z,
+      w*-0.5, h* 0.5, z,
+      w* 0.5, h* 0.5, z]
+  uvs = new Float32Array [
+    0, 0,
+    w, 0
+    0, h
+    w, h
+  ]
+  # 2 3
+  # 0 1
+  ixs = new Uint16Array [
+    0, 1, 2,
+    1, 3, 2
+    ]
+    
+  plane = new THREE.BufferGeometry()
+  plane.addAttribute 'position', new THREE.BufferAttribute(vs, 3)
+  plane.addAttribute 'index', new THREE.BufferAttribute(ixs, 1)
+  plane.addAttribute "uv", new THREE.BufferAttribute(uvs, 2)
+  plane.computeBoundingSphere() #do we need it?
+  
+  texture = THREE.ImageUtils.loadTexture( "../images/isoplane.png" )
+  texture.wrapS = THREE.RepeatWrapping
+  texture.wrapT = THREE.RepeatWrapping
+  
+  material = new THREE.MeshBasicMaterial
+    map: texture
+    color: 0x00FF00
+    side: THREE.DoubleSide
+
+  planeMesh = new THREE.Mesh plane, material
+  scene.add planeMesh
+
+  return planeMesh
+                                              
 init = ->
   keys = parseUri(window.location).queryKey
   container = document.getElementById("container")
@@ -251,6 +298,8 @@ init = ->
   camera.position.set 300, 0, -1550
   scene = new THREE.Scene()
   scene.fog = new THREE.Fog 0x000505, visibilityDistance*0.85, visibilityDistance
+  scene.add new THREE.AmbientLight 0x444444 
+
   controls = new THREE.TrackballControls  camera
 
   controls.rotateSpeed = 1.0
@@ -271,9 +320,8 @@ init = ->
       
   loadRandomPattern Math.min(20, Math.round(curves.boardSize*0.4))
   
-  lines = new THREE.Object3D
-  lines.add curves.group
-  scene.add lines
+  scene.add curves.group
+  createIsochronePlane 1000
   
   #
   renderer = new THREE.WebGLRenderer(antialias: keys.antialias is "true")
