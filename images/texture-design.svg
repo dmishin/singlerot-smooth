@@ -25,8 +25,8 @@
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
      inkscape:zoom="7.9195959"
-     inkscape:cx="34.937905"
-     inkscape:cy="768.29984"
+     inkscape:cx="34.226429"
+     inkscape:cy="770.79703"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -69,8 +69,11 @@
        id="rect3835"
        width="40"
        height="40"
-       x="22"
-       y="259.36218" />
+       x="25"
+       y="262.36218"
+       inkscape:export-filename="/home/dim/Prog/singlerot-smooth/images/isoplane.png"
+       inkscape:export-xdpi="288"
+       inkscape:export-ydpi="288" />
     <g
        id="g3814"
        style="stroke:#007ca8;stroke-opacity:1">
