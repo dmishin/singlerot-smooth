@@ -62,7 +62,7 @@ class WorkerFlyingCurves
     #NUmber of sides in the tube (2...10)
     @tubeSides = 3
     #continue initialization after loading
-    
+        
   _finishInitialize: (nCells, fldWidth, fldHeight, chunkLen)->
     #Colors array must be set by the previous calls
     if @colors.length isnt nCells
@@ -214,6 +214,47 @@ class WorkerFlyingCurves
       @chunks.push chunk
       @group.add chunk
     return
+    
+  createIsochronePlane: (z=0, textureScale=8) ->
+    #calculate plane dimensions
+    [w, h] = @getCrossSectionSize()
+    w2 = w*0.5
+    h2 = h*0.5
+    
+    vs = new Float32Array [ 
+      -w2, h2,0,
+      -w2,-h2,0,
+       w2, h2,0,
+      -w2,-h2,0,
+       w2,-h2,0,
+       w2, h2,0
+    ]
+
+    tw=th=@boardSize / textureScale
+    uvs = new Float32Array [
+      0,th, 0,0, tw,th,
+      0,0, tw,0, tw,th
+    ]
+    
+      
+    plane = new THREE.BufferGeometry()
+    plane.addAttribute 'position', new THREE.BufferAttribute(vs, 3)
+    plane.addAttribute "uv", new THREE.BufferAttribute(uvs, 2)
+    plane.computeBoundingSphere() #do we need it?
+    
+    texture = THREE.ImageUtils.loadTexture( "../images/isoplane.png" )
+    texture.wrapS = THREE.RepeatWrapping
+    texture.wrapT = THREE.RepeatWrapping
+    
+    material = new THREE.MeshBasicMaterial
+      map: texture
+      side: THREE.DoubleSide
+      opacity: 0.5
+      transparent: true
+
+    planeMesh = new THREE.Mesh plane, material
+    planeMesh.position.setZ z
+    @isochrone = planeMesh
   #Load parameters from URI arguments
   loadUriParameters: (keys)->
     loadIntParam = (fieldName, keyName, isValid)=>
@@ -244,48 +285,6 @@ class WorkerFlyingCurves
     return
           
 
-createIsochronePlane = (z=0)->
-  #calculate plane dimensions
-  [w, h] = curves.getCrossSectionSize()
-  w2 = w*0.5
-  h2 = h*0.5
-  
-  vs = new Float32Array [ 
-    -w2, h2,0,
-    -w2,-h2,0,
-     w2, h2,0,
-    -w2,-h2,0,
-     w2,-h2,0,
-     w2, h2,0
-  ]
-
-  tw=th=curves.boardSize
-  uvs = new Float32Array [
-    0,th, 0,0, tw,th,
-    0,0, tw,0, tw,th
-  ]
-  
-    
-  plane = new THREE.BufferGeometry()
-  plane.addAttribute 'position', new THREE.BufferAttribute(vs, 3)
-  plane.addAttribute "uv", new THREE.BufferAttribute(uvs, 2)
-  plane.computeBoundingSphere() #do we need it?
-  
-  texture = THREE.ImageUtils.loadTexture( "../images/isoplane.png" )
-  texture.wrapS = THREE.RepeatWrapping
-  texture.wrapT = THREE.RepeatWrapping
-  
-  material = new THREE.MeshBasicMaterial
-    map: texture
-    side: THREE.DoubleSide
-    opacity: 0.5
-    transparent: true
-
-  planeMesh = new THREE.Mesh plane, material
-  planeMesh.position.setZ z
-  scene.add planeMesh
-
-  return planeMesh
                                               
 init = ->
   keys = parseUri(window.location).queryKey
@@ -323,7 +322,7 @@ init = ->
   loadRandomPattern Math.min(20, Math.round(curves.boardSize*0.4))
   
   scene.add curves.group
-  createIsochronePlane 1000
+  scene.add curves.createIsochronePlane 1000
   
   #
   renderer = new THREE.WebGLRenderer(antialias: keys.antialias is "true")
