@@ -1,4 +1,4 @@
-all: singlerot3d-app.js tubing_worker_app.js ../
+all: singlerot3d-app.js tubing_worker_app.js 
 
 
 tubing.js: tubing.coffee

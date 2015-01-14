@@ -42,6 +42,7 @@ class WorkerFlyingCurves
     @chunkSize = 500
     #continue initialization after the worker is ready
     @loadFDL "$3b2o$2bobob2o$2bo5bo$7b2o$b2o$bo5bo$2b2obobo$5b2obo"
+    @size=100
     
   _finishInitialize: (nCells, fldWidth, fldHeight, chunkLen)->
     #Colors array must be set by the previous calls
@@ -56,6 +57,11 @@ class WorkerFlyingCurves
     @ready = true
     @chunkLen = chunkLen
     console.log "Initializatoin finished"
+
+  #Calculate geometric size (width, height) of the cross-section of the field.
+  getCrossSectionSize: ->
+    s = @size * @scale
+    [s,s]
     
   _onMsg: (e)->
     cmd = e.data.cmd
@@ -183,9 +189,49 @@ class WorkerFlyingCurves
       @chunks.push chunk
       @group.add chunk
     return
-        
 
-          
+createIsochronePlane = (z=0)->
+  #calculate plane dimensions
+  [w, h] = curves.getCrossSectionSize()
+  vs = new Float32Array \
+    [ w*-0.5, h*-0.5, z,
+      w* 0.5, h*-0.5, z,
+      w*-0.5, h* 0.5, z,
+      w* 0.5, h* 0.5, z]
+  uvs = new Float32Array [
+    0, 0,
+    w, 0
+    0, h
+    w, h
+  ]
+  # 2 3
+  # 0 1
+  ixs = new Uint16Array [
+    0, 1, 2,
+    1, 3, 2
+    ]
+    
+  plane = new THREE.BufferGeometry()
+  plane.addAttribute 'position', new THREE.BufferAttribute(vs, 3)
+  plane.addAttribute 'index', new THREE.BufferAttribute(ixs, 1)
+  plane.addAttribute "uv", new THREE.BufferAttribute(uvs, 2)
+  plane.computeBoundingSphere() #do we need it?
+  
+  texture = THREE.ImageUtils.loadTexture( "../images/isoplane.png" )
+  texture.wrapS = THREE.RepeatWrapping
+  texture.wrapT = THREE.RepeatWrapping
+  
+  material = new THREE.MeshLambertMaterial
+    map: texture
+    color: 0x111111
+    side: THREE.DoubleSide
+
+  planeMesh = new THREE.Mesh plane, material
+  planeObj = new THREE.Object3D
+  planeObj.add planeMesh
+  scene.add planeObj
+  return planeObj
+                                              
 init = ->
   keys = parseUri(window.location).queryKey
   container = document.getElementById("container")
@@ -199,7 +245,7 @@ init = ->
   camera.position.set 300, 0, -1550
   scene = new THREE.Scene()
   scene.fog = new THREE.Fog 0x000505, visibilityDistance*0.85, visibilityDistance
-  #scene.add new THREE.AmbientLight 0x444444 
+  scene.add new THREE.AmbientLight 0x444444 
 
   controls = new THREE.TrackballControls  camera
 
@@ -216,7 +262,7 @@ init = ->
   controls.keys = [ 65, 83, 68 ]
 
   curves = new WorkerFlyingCurves visibilityDistance, -0.5*visibilityDistance
-  
+  createIsochronePlane 1000
   lines = new THREE.Object3D
   lines.add curves.group
   scene.add lines
