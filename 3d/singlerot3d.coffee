@@ -252,18 +252,17 @@ createIsochronePlane = (z=0)->
       w* 0.5, h*-0.5, z,
       w*-0.5, h* 0.5, z,
       w* 0.5, h* 0.5, z]
-  uvs = new Float32Array [
-    0, 0,
-    w, 0
-    0, h
-    w, h
-  ]
   # 2 3
   # 0 1
   ixs = new Uint16Array [
     0, 1, 2,
     1, 3, 2
     ]
+    
+  uvs = new Float32Array [
+    0, 0,   1, 0,   0, 1  #0 1 2
+    1, 0,   1, 1,   0, 1  #1 3 2
+  ]
     
   plane = new THREE.BufferGeometry()
   plane.addAttribute 'position', new THREE.BufferAttribute(vs, 3)
@@ -277,7 +276,7 @@ createIsochronePlane = (z=0)->
   
   material = new THREE.MeshBasicMaterial
     map: texture
-    color: 0x00FF00
+    #color: 0x00FF00
     side: THREE.DoubleSide
 
   planeMesh = new THREE.Mesh plane, material
