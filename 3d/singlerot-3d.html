@@ -48,8 +48,7 @@
       <div>
 	<p>
 	Load predefined pattern:
-	<br/>
-	<select id="select-pattern"><option value=""></option></select>
+	<select id="select-pattern"><option value=""></option></select>,
 	</p>
 	<p>
 	  <button id="btn-make-random">Create random pattern</button> of <select id="random-pattern-size">
@@ -59,16 +58,22 @@
 	    <option value="50">50</option>
 	    <option value="70">70</option>
 	    <option value="100">100</option>
-	  </select> cells.
+	  </select> cells,
 	</p>
 	
 	<p>
-	  Or enter RLE of the custom pattern. For options for coloring cells and combining patterns, see <a target="_blank" href="../help.html#language">language description here</a>. See also the <a target="_blank" href="http://dmishin.github.io/singlerot-spaceships/singlerot-spaceships.html">library of the Single Rotation spaceships</a> for additional patterns to try.
-	<br/>
-	<textarea id="custom-rle"></textarea>
-	<br/>
-	<button id="btn-load-custom">Load</button>
+	  Or enter RLE of the custom pattern below. For advanced options, see <a target="_blank" href="../help.html#language">language description here</a>. See also the <a target="_blank" href="http://dmishin.github.io/singlerot-spaceships/singlerot-spaceships.html">spaceship library</a> for additional patterns to try.
+	  <br/>
+	  <textarea id="custom-rle"></textarea>
+	  <br/>
+	  <button id="btn-load-custom">Load</button>
 	</p>
+	<hr/>
+	<p>
+	  <input type="checkbox" id="show-isoplane" title="Show plane of constant time"><label for="show-isoplane">Show isochrone</label></input>
+	</p>
+	
+	
 	<div id="toolbar-close">
 	  <button id="btn-close-patterns" class="transparent-image-button" title="Close">
 	    <img src="../images/ic_clear_24px.svg" style="width:3em;height:3em">

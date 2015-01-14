@@ -215,7 +215,7 @@ class WorkerFlyingCurves
       @group.add chunk
     return
     
-  createIsochronePlane: (z=0, textureScale=8) ->
+  createIsochronePlane: (z=0, textureScale=8, visible=false) ->
     #calculate plane dimensions
     [w, h] = @getCrossSectionSize()
     w2 = w*0.5
@@ -254,7 +254,9 @@ class WorkerFlyingCurves
 
     planeMesh = new THREE.Mesh plane, material
     planeMesh.position.setZ z
+    planeMesh.visible = visible
     @isochrone = planeMesh
+    
   #Load parameters from URI arguments
   loadUriParameters: (keys)->
     loadIntParam = (fieldName, keyName, isValid)=>
@@ -416,6 +418,8 @@ bindEvents = ->
   E("btn-make-random").addEventListener "click", (e)->
     loadRandomPattern parseInt(E("random-pattern-size").value, 10)
     hidePatternsWindow()
+  E("show-isoplane").addEventListener "change", (e)->
+    curves.isochrone.visible = E("show-isoplane").checked
   
 initLibrary = ->
   if window.defaultLibrary?
