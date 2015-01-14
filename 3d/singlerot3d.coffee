@@ -278,8 +278,11 @@ createIsochronePlane = (z=0)->
   material = new THREE.MeshBasicMaterial
     map: texture
     side: THREE.DoubleSide
+    opacity: 0.5
+    transparent: true
 
   planeMesh = new THREE.Mesh plane, material
+  planeMesh.position.setZ z
   scene.add planeMesh
 
   return planeMesh
