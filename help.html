@@ -9,42 +9,43 @@
   <body>
     <h1>What is this?</h1>
     <figure>
-      <a href="singlerot-smooth.html">
-	<img src="images/singlerot-smooth.png">
-      </a>
-      <figcaption><a href="singlerot-smooth.html">2D version</a></figcaption>
+      <a href="singlerot-smooth.html"><img src="images/singlerot-smooth.png"></a>
+      <a href="3d/singlerot-3d.html"><img src="images/singlerot-3d.png"></a>
+      <figcaption><a href="singlerot-smooth.html">2D</a> and <a href="3d/singlerot-3d.html">3D</a> visualizations</figcaption>
     </figure>
-    <figure>
-      <a href="3d/singlerot-3d.html">
-	<img src="images/singlerot-3d.png">
-      </a>
-      <figcaption><a href="3d/singlerot-3d.html">3D version</a></figcaption>
-    </figure>
+
     <p>It's a simulator of
       the <a href="http://dmishin.blogspot.com/2013/11/the-single-rotation-rule-remarkably.html">Single
 	Rotation</a> cellular automaton, that tracks positions of the
       cells and uses Lanczos interpolation to add an intermediate
-      frames. Its primary purpose is a nice visual effect, for
-      experimenting with reversible cellular automata
-      see <a href="http://dmishin.github.io/js-revca/index.html?rule=0,2,8,3,1,5,6,7,4,9,10,11,12,13,14,15&step=8&frame_delay=100&size=64x64&cell_size=6,1&phase=0">online
-	simulator</a>.
+      frames. Its primary purpose is a nice visual effect, a better tool for
+      experiments with reversible cellular automata
+      is the <a href="http://dmishin.github.io/js-revca/index.html?rule=0,2,8,3,1,5,6,7,4,9,10,11,12,13,14,15&step=8&frame_delay=100&size=64x64&cell_size=6,1&phase=0">online simulator</a>.
+    </p>
+    <p>See also blog posts on them:
+      <ul><li>2D: <a href="http://dmishin.blogspot.com/2014/12/single-rotation-rule-with-frame.html">Single Rotation rule with frame interpolation</a>
+	</li>
+	<li>3D: <a href="http://dmishin.blogspot.com/2015/01/3d-single-rotation.html">Now in 3D (Single Rotation)</a>
+	</li>
+      </ul>
     </p>
 
     <h2>Single Rotation rule</h2>
     <p>
-      In short, this cellular automaton acts on a grid of cells, each cell can be dead or alive. On each generation, the grid is divided into 2x2 blocks, and if the block contains exactly one alive cell, it is rotated by 90&deg;. Thus "single rotation". After each generation, the 2x2 subdivision is alternated. This scheme is known as <a href="http://en.wikipedia.org/wiki/Block_cellular_automaton">Margolus neighborhood</a>.
+      This cellular automaton acts on a grid of cells, where each cell is either dead or alive. On each generation, the grid is divided into 2x2 blocks, and if the block contains exactly one alive cell, the block is rotated by 90&deg;. Thus "single rotation". After each generation, the 2x2 subdivision is alternated. This scheme is known as <a href="http://en.wikipedia.org/wiki/Block_cellular_automaton">Margolus neighborhood</a>.
     </p>
     <figure>
       <img src="images/single-rotation.gif">
+      <figcaption>Illustration of the Single Rotation rule.</figcaption>
     </figure>
     <p>
-      Despite the extreme simplicity, this rule produces infinitely complex behavior, resembling the iconic <a href="http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Game of Life</a>. One important difference is that "Single Rotation" is time-reversible, that is: for every state it is always possible to calculate previous state. You can play with this rule in the <a href="http://dmishin.github.io/js-revca/index.html?rule=0,2,8,3,1,5,6,7,4,9,10,11,12,13,14,15&step=8&frame_delay=100&size=64x64&cell_size=6,1&phase=0">online simulator</a>.
+      Despite the simplicity, complex emergent behavior appears in this rule, resembling the iconic <a href="http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Game of Life</a>. One important difference is that "Single Rotation" is time-reversible, that is: for every state it is always possible (and easy) to calculate previous state. You can play with this rule in the <a href="http://dmishin.github.io/js-revca/index.html?rule=0,2,8,3,1,5,6,7,4,9,10,11,12,13,14,15&step=8&frame_delay=100&size=64x64&cell_size=6,1&phase=0">online simulator</a>.
     </p>
     <h2>Cell tracking</h2>
-    <p>"Single Rotation" rule also preserves total number of the alive cells. Moreover, from the definition of the rule it is clear that it is possible to track position of the every individual alive cell. This simulator does this.
+    <p>"Single Rotation" rule is <i>conservative</i>: it preserves total number of alive cells. Moreover, from the definition of the rule it is clear that it is possible to track position of the every individual alive cell. The application does this idea.
     </p>
     <h2>Interpolation</h2>
-    <p>Cell coordinates are discrete, alive cells are "jumping" by 1 in some direction. To make animation more visually pleasing, this simulator interpolates intermediate positions, using <a href="http://en.wikipedia.org/wiki/Lanczos_resampling">Lanczos resampling</a>.
+    <p>Cell coordinates are discrete, alive cells are "jumping" by 1 unit in some direction. To make animation more visually pleasing, this simulator interpolates intermediate positions, using <a href="http://en.wikipedia.org/wiki/Lanczos_resampling">Lanczos resampling</a>.
     </p>
     <h2>Oscillation filtering</h2>
     <p>One can easily check that in the "Single Rotation" rule a single cell would constantly rotate with period 4. To make this less annoying, a possibility to filter higher frequencies of the cell movement is added. For example, when "filter" setting is 4, then every oscillation with period 4 or less is replaced by the constant average value, and rotating cells visually stand still. Higher filter setting allow to cease oscillations of higher period. This is also done by Lanczos filter.
