@@ -43,10 +43,9 @@ button:hover{
 body, html{
   margin:0;
   padding:0;
-}
-body{
-    color: #fff;
-    background-color: #222;
+  overflow: hidden; /*Important for threejs!*/
+  color: #fff;
+  background-color: #222;
 }
 
 /****************
